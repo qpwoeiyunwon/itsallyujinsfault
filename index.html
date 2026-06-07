@@ -710,7 +710,7 @@ async function generateDraft(){
   document.getElementById('lawyer-text').textContent='⚖️ 변론문 초안을 작성 중입니다...';
   document.getElementById('lawyer-next-btn').style.display='none';
   document.getElementById('statement-box').style.display='none';
-  const sys=`연인 분쟁 변호사. 변론문 초안을 150자 이내로 작성. 법정 스타일, 존댓말.`;
+  const sys=`당신은 연인 간의 사소한 분쟁을 맡은 유머러스하지만 진지한 변호사입니다. 의뢰인의 입장을 듣고 변론문 초안을 작성하세요. 형식: 법정 변론문 스타일로, 300자 내외. 존댓말.`;
   const result=await callClaude([{role:'user',content:`사건: ${S.topic}\n의뢰인 역할: ${S.role}\n의뢰인 진술: ${stmt}`}],sys);
   document.getElementById('lawyer-text').textContent='초안이 완성되었습니다! 아래에서 수정 후 최종 확정하세요. 📝';
   document.getElementById('final-statement').value=result;
