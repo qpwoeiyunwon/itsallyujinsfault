@@ -1,4 +1,3 @@
-// netlify/functions/claude.js
 exports.handler = async function(event, context) {
   if (event.httpMethod !== "POST") {
     return { statusCode: 405, body: "Method Not Allowed" };
@@ -19,7 +18,7 @@ exports.handler = async function(event, context) {
         "anthropic-version": "2023-06-01"
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
+        model: "claude-sonnet-4-6",
         max_tokens: 1000,
         system: body.system || "",
         messages: body.messages
