@@ -903,6 +903,11 @@ async function runPlaintiff(){
   const pArg=await callClaude([{role:'user',content:`원고 변론문: ${S.plaintiffStatement}\n핵심 주장 2-3문장 요약.`}],sys);
   S.plaintiffArg=pArg;
 
+  // Firebase에 원고 변론 요약 저장 (피고 미러링용)
+  waitFirebase(async()=>{
+    await window.dbUpdate(window.dbRef(window.db,'rooms/'+S.roomCode),{plaintiffArg:pArg});
+  });
+
   let arm=false;
   const lt=setInterval(()=>{arm=!arm;renderLawyer('svg-p',true,arm);},600);
   trialTimers.push(lt);
@@ -924,6 +929,11 @@ async function runDefendant(){
   const sys='당신은 법정 변호사입니다. 피고 변론문 핵심을 2-3문장으로 요약하세요. 법정 스타일, 존댓말.';
   const dArg=await callClaude([{role:'user',content:`피고 변론문: ${S.defendantStatement}\n핵심 주장 2-3문장 요약.`}],sys);
   S.defendantArg=dArg;
+
+  // Firebase에 피고 변론 요약 저장
+  waitFirebase(async()=>{
+    await window.dbUpdate(window.dbRef(window.db,'rooms/'+S.roomCode),{defendantArg:dArg});
+  });
 
   let arm=false;
   const lt=setInterval(()=>{arm=!arm;renderLawyer('svg-d',true,arm);},600);
@@ -959,10 +969,10 @@ plaintiff_fault+defendant_fault=100`;
   try{verdict=JSON.parse(r.replace(/```json|```/g,'').trim());}
   catch{verdict={plaintiff_fault:50,defendant_fault:50,reason:'양측 모두 조금씩 잘못이 있습니다.',order:'서로 안아주기'};}
 
-  // Firebase에 판결 저장 (피고도 볼 수 있게)
-  waitFirebase(async ()=>{
+  // Firebase에 판결 + 변론 요약 저장
+  waitFirebase(async()=>{
     await window.dbUpdate(window.dbRef(window.db,'rooms/'+S.roomCode),{
-      verdict: verdict, status:'done'
+      verdict:verdict, status:'done'
     });
   });
 
@@ -970,7 +980,7 @@ plaintiff_fault+defendant_fault=100`;
   showVerdictScreen(verdict);
 }
 
-// 피고: Firebase에서 판결 결과 수신
+// 피고: Firebase 실시간 감지로 원고 화면 미러링
 function listenForVerdict(){
   show('s-wait');
   showTrial();
@@ -982,29 +992,86 @@ function listenForVerdict(){
   document.getElementById('verdict-p-name').textContent=S.plaintiffName||'원고';
   document.getElementById('verdict-d-name').textContent=S.defendantName||'피고';
 
-  // 개정 애니메이션 먼저
+  // 개정 애니메이션
   const gavel=document.getElementById('gavel-icon');
   const overlay=document.getElementById('gavel-overlay');
+  overlay.style.display='flex';
   let big=false,cnt=0;
   const gt=setInterval(()=>{
     big=!big;gavel.style.fontSize=big?'clamp(80px,22vw,110px)':'clamp(60px,16vw,80px)';cnt++;
-    if(cnt>=6){clearInterval(gt);overlay.style.display='none';
-      document.getElementById('case-banner').style.display='block';
-      document.getElementById('case-banner').textContent='⚖️ '+S.topic;
-      document.getElementById('chars-layer').style.display='flex';
-    }
+    if(cnt>=6){clearInterval(gt);overlay.style.display='none';}
   },450);
+  trialTimers.push(gt);
 
+  // Firebase 변화 감지 → 단계별 미러링
+  let phase='waiting'; // waiting → plaintiff → defendant → judge → done
   waitFirebase(()=>{
     const roomRef=window.dbRef(window.db,'rooms/'+S.roomCode);
     if(roomListener){roomListener();roomListener=null;}
     roomListener=window.dbOnValue(roomRef,snap=>{
       const data=snap.val();
-      if(data?.status==='done' && data?.verdict){
+      if(!data)return;
+
+      // 원고 변론 요약 수신 → 원고 말풍선 재생
+      if(phase==='waiting' && data.plaintiffArg){
+        phase='plaintiff';
+        setTimeout(()=>{
+          document.getElementById('case-banner').style.display='block';
+          document.getElementById('case-banner').textContent='⚖️ '+S.topic;
+          document.getElementById('chars-layer').style.display='flex';
+          document.getElementById('slot-p').style.opacity='1';
+          document.getElementById('slot-p').style.filter='drop-shadow(0 0 14px rgba(100,160,255,.7))';
+          document.getElementById('slot-d').style.opacity='.4';
+          document.getElementById('slot-j').style.opacity='.6';
+          let arm=false;
+          const lt=setInterval(()=>{arm=!arm;renderLawyer('svg-p',true,arm);},600);
+          trialTimers.push(lt);
+          const bubble=document.getElementById('bubble-p');
+          bubble.style.display='block';
+          typeText(document.getElementById('bubble-p-text'),data.plaintiffArg,35,()=>{
+            clearInterval(lt);renderLawyer('svg-p',false,false);
+            setTimeout(()=>{bubble.style.display='none';phase='defendant';},10000);
+          },1);
+        },600);
+      }
+
+      // 피고 변론 요약 수신 → 피고 말풍선 재생
+      if(phase==='defendant' && data.defendantArg){
+        phase='judge';
+        document.getElementById('slot-d').style.opacity='1';
+        document.getElementById('slot-d').style.filter='drop-shadow(0 0 14px rgba(255,120,100,.7))';
+        document.getElementById('slot-p').style.opacity='.4';
+        document.getElementById('slot-p').style.filter='none';
+        let arm=false;
+        const lt=setInterval(()=>{arm=!arm;renderLawyer('svg-d',true,arm);},600);
+        trialTimers.push(lt);
+        const bubble=document.getElementById('bubble-d');
+        bubble.style.display='block';
+        typeText(document.getElementById('bubble-d-text'),data.defendantArg,35,()=>{
+          clearInterval(lt);renderLawyer('svg-d',false,false);
+          setTimeout(()=>{
+            bubble.style.display='none';
+            // 판사 대기
+            document.getElementById('slot-j').style.opacity='1';
+            document.getElementById('slot-j').style.filter='drop-shadow(0 0 18px rgba(255,215,0,.8))';
+            document.getElementById('slot-d').style.opacity='.4';
+            document.getElementById('slot-d').style.filter='none';
+            document.getElementById('judge-bubble-wrap').style.display='flex';
+            let jarm=false;
+            const jt=setInterval(()=>{jarm=!jarm;renderJudge('svg-j',true,jarm);},700);
+            trialTimers.push(jt);
+          },10000);
+        },0.85);
+      }
+
+      // 판결 수신 → 판결 화면
+      if(data.status==='done' && data.verdict && phase==='judge'){
+        phase='done';
         if(roomListener){roomListener();roomListener=null;}
         clearTrialTimers();
-        // 피고는 바로 판결 화면으로
-        setTimeout(()=>showVerdictScreen(data.verdict),1500);
+        renderJudge('svg-j',false,true);
+        document.getElementById('judge-bubble-wrap').style.display='none';
+        setTimeout(()=>showVerdictScreen(data.verdict),1000);
       }
     });
   });
@@ -1042,30 +1109,33 @@ function showVerdictScreen(v){
   },400);
 }
 
-// ════════════════════════════════
-// 리셋
-// ════════════════════════════════
 function resetApp(){
   clearTrialTimers();
   if(waitInterval)clearInterval(waitInterval);
   if(roomListener){roomListener();roomListener=null;}
   Object.assign(S,{userName:'',topic:'',role:'원고',roomCode:'',plaintiffName:'',defendantName:'',plaintiffStatement:'',defendantStatement:'',plaintiffArg:'',defendantArg:''});
   ['name-input','code-input','topic-textarea','my-statement','final-statement'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('complaint-preview').textContent='...';
-  document.getElementById('statement-box').style.display='none';
-  document.getElementById('draft-box').style.display='none';
-  document.getElementById('gavel-overlay').style.display='flex';
-  document.getElementById('case-banner').style.display='none';
-  document.getElementById('chars-layer').style.display='none';
-  document.getElementById('bubble-p').style.display='none';
-  document.getElementById('bubble-d').style.display='none';
-  document.getElementById('judge-bubble-wrap').style.display='none';
-  document.getElementById('verdict-gavel').style.display='block';
-  document.getElementById('verdict-content').style.display='none';
-  document.getElementById('verdict-screen').style.display='none';
-  document.getElementById('verdict-screen').classList.remove('active');
-  document.getElementById('trial-screen').style.display='none';
-  document.getElementById('counter-inner').innerHTML=`
+  const cp=document.getElementById('complaint-preview');if(cp)cp.textContent='...';
+  const sb=document.getElementById('statement-box');if(sb)sb.style.display='none';
+  const db=document.getElementById('draft-box');if(db)db.style.display='none';
+  const go=document.getElementById('gavel-overlay');if(go)go.style.display='flex';
+  const cb=document.getElementById('case-banner');if(cb)cb.style.display='none';
+  const cl=document.getElementById('chars-layer');if(cl)cl.style.display='none';
+  const bp=document.getElementById('bubble-p');if(bp)bp.style.display='none';
+  const bd=document.getElementById('bubble-d');if(bd)bd.style.display='none';
+  const jb=document.getElementById('judge-bubble-wrap');if(jb)jb.style.display='none';
+  const vg=document.getElementById('verdict-gavel');if(vg)vg.style.display='block';
+  const vc=document.getElementById('verdict-content');if(vc)vc.style.display='none';
+  const vs=document.getElementById('verdict-screen');
+  if(vs){vs.style.display='none';vs.classList.remove('active');}
+  const ts=document.getElementById('trial-screen');if(ts)ts.style.display='none';
+  // 슬롯 opacity 초기화
+  const slotP=document.getElementById('slot-p');if(slotP){slotP.style.opacity='.45';slotP.style.filter='none';}
+  const slotD=document.getElementById('slot-d');if(slotD){slotD.style.opacity='.45';slotD.style.filter='none';}
+  const slotJ=document.getElementById('slot-j');if(slotJ){slotJ.style.opacity='.7';slotJ.style.filter='none';}
+  // counter-inner 리셋
+  const ci=document.getElementById('counter-inner');
+  if(ci) ci.innerHTML=`
     <div style="font-size:var(--font-sm);color:#5a3a1a;font-weight:700;text-align:center">논쟁 주제를 작성하여 제출하세요</div>
     <div class="complaint-wrap" style="width:100%;max-width:260px">
       <div class="complaint-stamp">접수</div><div class="complaint-title">고 소 장</div>
@@ -1076,6 +1146,12 @@ function resetApp(){
       placeholder="예: 남자친구가 게임을 너무 오래 해요..."
       oninput="document.getElementById('complaint-preview').textContent=this.value||'...'"></textarea>
     <button class="btn-primary" style="max-width:200px" onclick="submitCounter()">제출하기 📨</button>`;
+  // SVG 초기화
+  renderLawyer('lawyer-svg',false,false);
+  renderLawyer('svg-p',false,false);
+  renderLawyer('svg-d',false,false);
+  renderJudge('svg-j',false,false);
+  renderJudge('judge-verdict-svg',false,false);
   show('s-intro');
 }
 
