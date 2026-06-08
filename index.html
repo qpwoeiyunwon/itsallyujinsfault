@@ -9,7 +9,6 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, get, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
 const firebaseConfig = {
   apiKey: "AIzaSyB0RJSKtN4inRQuaFQJkUCjrsJMxIKcPAQ",
   authDomain: "itsallyujinsfault.firebaseapp.com",
@@ -19,16 +18,11 @@ const firebaseConfig = {
   messagingSenderId: "76258429481",
   appId: "1:76258429481:web:0a3983fff621ecb860ea38"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-window.db = db;
-window.dbRef = ref;
-window.dbSet = set;
-window.dbGet = get;
-window.dbOnValue = onValue;
-window.dbUpdate = update;
-window.firebaseReady = true;
+window.db=db; window.dbRef=ref; window.dbSet=set;
+window.dbGet=get; window.dbOnValue=onValue; window.dbUpdate=update;
+window.firebaseReady=true;
 window.dispatchEvent(new Event('firebaseReady'));
 </script>
 <style>
@@ -37,337 +31,196 @@ html,body{width:100%;min-height:100%;font-family:'Noto Sans KR',sans-serif;backg
 button{font-family:inherit;cursor:pointer;}
 textarea,input{font-family:inherit;}
 :root{
-  --max-w:480px;--pad:clamp(12px,4vw,24px);
-  --font-base:clamp(12px,3.5vw,15px);--font-sm:clamp(10px,2.8vw,12px);
-  --font-lg:clamp(14px,4vw,18px);
-  --btn-pad:clamp(10px,3vw,14px) clamp(16px,5vw,32px);--radius:10px;
+  --pad:clamp(12px,4vw,24px);
+  --fs:clamp(12px,3.5vw,15px);--fsm:clamp(10px,2.8vw,12px);--fsl:clamp(14px,4vw,18px);
+  --bp:clamp(10px,3vw,14px) clamp(16px,5vw,32px);--r:10px;
 }
-.screen{display:none;flex-direction:column;min-height:100dvh;width:100%;}
-.screen.active{display:flex;}
+/* 화면 */
+.pg{display:none;flex-direction:column;min-height:100dvh;width:100%;}
+.pg.on{display:flex;}
+/* 공통 */
 .topbar{width:100%;border-bottom:2px solid #1a5fa8;padding:10px var(--pad);display:flex;align-items:center;background:white;position:sticky;top:0;z-index:100;box-shadow:0 2px 6px rgba(0,0,0,.07);}
-.topbar-title{font-size:clamp(11px,3vw,14px);color:#1a237e;font-weight:900;letter-spacing:1px;}
-.topbar-spacer{flex:1;}
-.topbar-user{font-size:var(--font-sm);color:#555;margin-left:12px;padding-left:12px;border-left:1px solid #ddd;white-space:nowrap;}
+.ttl{font-size:clamp(11px,3vw,14px);color:#1a237e;font-weight:900;letter-spacing:1px;}
+.sp{flex:1;}
+.usr{font-size:var(--fsm);color:#555;margin-left:12px;padding-left:12px;border-left:1px solid #ddd;white-space:nowrap;}
 .footer{padding:12px var(--pad);color:#ccc;font-size:9px;text-align:center;}
-.center-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(16px,4vw,28px);padding:clamp(20px,5vw,40px) var(--pad);}
-.logo-img{width:clamp(120px,40vw,200px);object-fit:contain;filter:none;}
-.logo-label{font-size:var(--font-base);font-weight:700;color:#1a5fa8;letter-spacing:2px;margin-top:6px;}
-.input-block{display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;max-width:var(--max-w);}
-.main-input{width:100%;max-width:300px;padding:13px 18px;border:1.5px solid #1a5fa8;border-radius:6px;font-size:var(--font-base);text-align:center;outline:none;}
-.btn-primary{width:100%;max-width:300px;padding:var(--btn-pad);background:linear-gradient(135deg,#1a5fa8,#1a237e);color:white;border:none;border-radius:var(--radius);font-size:var(--font-base);font-weight:700;letter-spacing:1px;box-shadow:0 4px 16px rgba(26,95,168,.3);}
-.btn-primary:disabled{background:#ccc;box-shadow:none;cursor:not-allowed;}
-.btn-gold{width:100%;padding:var(--btn-pad);background:linear-gradient(135deg,#FFD700,#f39c12);color:#1a1a1a;border:none;border-radius:var(--radius);font-size:var(--font-base);font-weight:700;}
-.btn-green{width:100%;margin-top:10px;padding:var(--btn-pad);background:linear-gradient(135deg,#27ae60,#1e8449);color:white;border:none;border-radius:var(--radius);font-size:var(--font-base);font-weight:700;}
-.divider{color:#aaa;font-size:var(--font-sm);}
-.code-input{width:100%;max-width:300px;padding:13px 16px;border:1.5px solid #1a5fa8;border-radius:var(--radius);font-size:var(--font-base);text-align:center;letter-spacing:3px;outline:none;}
-.complaint-wrap{background:#fffef5;border:2px solid #8B6340;border-radius:4px;padding:clamp(14px,4vw,20px);width:100%;max-width:280px;box-shadow:4px 4px 16px rgba(0,0,0,.3);position:relative;}
-.complaint-stamp{position:absolute;top:10px;right:12px;border:2px solid #c0392b;border-radius:4px;padding:2px 6px;color:#c0392b;font-size:10px;font-weight:700;transform:rotate(15deg);opacity:.7;}
-.complaint-title{text-align:center;font-size:clamp(14px,4vw,18px);font-weight:700;color:#1a1a1a;border-bottom:2px solid #1a1a1a;padding-bottom:8px;margin-bottom:12px;letter-spacing:4px;}
-.complaint-label{font-size:10px;color:#555;margin-bottom:5px;}
-.complaint-body{font-size:12px;color:#1a1a1a;background:#f0ead8;padding:8px 10px;border-radius:4px;line-height:1.6;min-height:44px;}
-.complaint-footer{margin-top:12px;font-size:10px;color:#888;text-align:right;}
-.code-box{background:#f0f4ff;border:3px dashed #1a5fa8;border-radius:12px;padding:clamp(14px,4vw,20px) clamp(24px,8vw,40px);font-size:clamp(22px,7vw,32px);font-weight:700;letter-spacing:clamp(4px,2vw,8px);color:#1a237e;text-align:center;}
-.case-box{background:#fffef5;border:1px solid #c8a060;border-radius:8px;padding:12px 16px;width:100%;max-width:300px;}
-.brief-wrap{flex:1;display:flex;flex-direction:column;max-width:var(--max-w);width:100%;margin:0 auto;padding:clamp(14px,4vw,20px) var(--pad);}
-.lawyer-row{display:flex;align-items:flex-end;gap:clamp(8px,3vw,14px);margin-bottom:14px;}
-.lawyer-box{flex:1;background:white;border-radius:12px;border:2px solid #1a5fa8;padding:clamp(10px,3vw,14px);box-shadow:0 2px 12px rgba(26,95,168,.1);font-size:var(--font-sm);line-height:1.7;}
-.edit-box{background:white;border-radius:12px;border:2px solid #1a5fa8;padding:clamp(10px,3vw,16px);}
-.input-box{background:white;border-radius:12px;border:2px solid #c8a060;padding:clamp(10px,3vw,16px);margin-bottom:14px;}
-.full-textarea{width:100%;padding:10px;border-radius:8px;border:1.5px solid #c8a060;font-size:var(--font-sm);resize:none;line-height:1.7;}
-/* 대기 */
-.wait-card{background:#f0f4ff;border-radius:12px;padding:clamp(16px,5vw,24px);text-align:center;width:100%;max-width:320px;}
-.wait-row{display:flex;gap:clamp(16px,6vw,28px);justify-content:center;margin-top:12px;}
-/* 재판 */
-#trial-screen{position:fixed;inset:0;overflow:hidden;display:none;}
-.court-svg-wrap{position:absolute;inset:0;}
-.court-svg-wrap svg{width:100%;height:100%;}
-.trial-overlay{position:absolute;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.7);}
-.gavel-big{font-size:clamp(60px,18vw,110px);filter:drop-shadow(0 4px 20px rgba(255,200,0,.7));transition:font-size .15s;}
-.open-text{color:#FFD700;font-size:clamp(16px,5vw,22px);font-weight:900;margin-top:16px;letter-spacing:clamp(3px,1.5vw,6px);text-shadow:0 2px 8px rgba(0,0,0,.8);}
-.case-banner{position:absolute;top:0;left:0;right:0;background:rgba(10,10,40,.88);padding:7px 12px;text-align:center;z-index:20;border-bottom:2px solid #8B6340;font-size:clamp(10px,2.8vw,13px);color:#FFD700;font-weight:700;letter-spacing:1px;}
-.chars-layer{position:absolute;inset:0;z-index:10;pointer-events:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 clamp(4px,2vw,16px) clamp(8px,3vw,20px);}
-.char-slot{display:flex;flex-direction:column;align-items:center;gap:4px;transition:opacity .4s;}
-.char-label{font-size:clamp(8px,2.2vw,11px);padding:2px 8px;border-radius:5px;font-weight:700;white-space:nowrap;}
-.char-slot svg{width:clamp(60px,16vw,110px);height:auto;}
-.bubble{background:rgba(255,255,255,.97);border-radius:14px;padding:clamp(7px,2vw,11px) clamp(8px,2.5vw,14px);font-size:clamp(10px,2.8vw,13px);line-height:1.6;color:#111;box-shadow:0 4px 16px rgba(0,0,0,.25);margin-bottom:6px;max-width:clamp(140px,38vw,200px);position:relative;word-break:keep-all;}
-.bubble-tail-left{position:absolute;bottom:-9px;left:20px;width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;}
-.bubble-tail-right{position:absolute;bottom:-9px;right:20px;width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;}
-.judge-bubble-wrap{position:absolute;left:50%;transform:translateX(-50%);bottom:clamp(155px,42vw,260px);z-index:15;display:flex;flex-direction:column;align-items:center;}
-.judge-bubble{background:rgba(255,248,220,.97);border:2.5px solid #8B6340;border-radius:14px;padding:10px 14px;font-size:clamp(10px,2.8vw,12px);line-height:1.6;color:#111;text-align:center;max-width:clamp(160px,44vw,220px);box-shadow:0 4px 16px rgba(0,0,0,.3);}
-/* 판결 */
-#verdict-screen{position:fixed;inset:0;overflow-y:auto;background:linear-gradient(180deg,#0a0a2e 0%,#1a1a5e 60%,#0a0a2e 100%);z-index:200;display:none;flex-direction:column;align-items:center;justify-content:center;padding:clamp(16px,5vw,28px);}
-#verdict-screen.active{display:flex;}
-.verdict-inner{width:100%;max-width:420px;display:flex;flex-direction:column;gap:clamp(10px,3vw,14px);}
-.bar-wrap{background:rgba(255,255,255,.05);border-radius:12px;padding:clamp(12px,4vw,16px);border:1px solid rgba(255,215,0,.3);}
-.fault-bar{height:24px;border-radius:12px;overflow:hidden;background:#333;display:flex;margin-top:10px;}
-.fault-p{background:linear-gradient(90deg,#74b9ff,#0984e3);display:flex;align-items:center;justify-content:center;transition:width 1.2s ease;}
-.fault-d{background:linear-gradient(90deg,#fd79a8,#e17055);display:flex;align-items:center;justify-content:center;transition:width 1.2s ease;}
-.fault-label{color:white;font-size:10px;font-weight:700;}
-.verdict-section{background:rgba(255,255,255,.05);border-radius:12px;padding:clamp(12px,4vw,16px);border:1px solid rgba(255,215,0,.2);}
-.verdict-order{background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(255,215,0,.05));border-radius:12px;padding:clamp(12px,4vw,16px);border:2px solid #FFD700;text-align:center;}
+.cw{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(16px,4vw,28px);padding:clamp(20px,5vw,40px) var(--pad);}
+.li{width:clamp(120px,40vw,200px);object-fit:contain;}
+.ll{font-size:var(--fs);font-weight:700;color:#1a5fa8;letter-spacing:2px;margin-top:6px;}
+.ib{display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;max-width:480px;}
+.mi{width:100%;max-width:300px;padding:13px 18px;border:1.5px solid #1a5fa8;border-radius:6px;font-size:var(--fs);text-align:center;outline:none;}
+.bp{width:100%;max-width:300px;padding:var(--bp);background:linear-gradient(135deg,#1a5fa8,#1a237e);color:white;border:none;border-radius:var(--r);font-size:var(--fs);font-weight:700;box-shadow:0 4px 16px rgba(26,95,168,.3);}
+.bp:disabled{background:#ccc;box-shadow:none;cursor:not-allowed;}
+.bg{width:100%;margin-top:10px;padding:var(--bp);background:linear-gradient(135deg,#27ae60,#1e8449);color:white;border:none;border-radius:var(--r);font-size:var(--fs);font-weight:700;}
+.bgo{width:100%;padding:var(--bp);background:linear-gradient(135deg,#FFD700,#f39c12);color:#1a1a1a;border:none;border-radius:var(--r);font-size:var(--fs);font-weight:700;}
+.dv{color:#aaa;font-size:var(--fsm);}
+.ci{width:100%;max-width:300px;padding:13px 16px;border:1.5px solid #1a5fa8;border-radius:var(--r);font-size:var(--fs);text-align:center;letter-spacing:3px;outline:none;}
+.cpl{background:#fffef5;border:2px solid #8B6340;border-radius:4px;padding:clamp(14px,4vw,20px);width:100%;max-width:280px;box-shadow:4px 4px 16px rgba(0,0,0,.3);position:relative;}
+.cs{position:absolute;top:10px;right:12px;border:2px solid #c0392b;border-radius:4px;padding:2px 6px;color:#c0392b;font-size:10px;font-weight:700;transform:rotate(15deg);opacity:.7;}
+.ct{text-align:center;font-size:clamp(14px,4vw,18px);font-weight:700;color:#1a1a1a;border-bottom:2px solid #1a1a1a;padding-bottom:8px;margin-bottom:12px;letter-spacing:4px;}
+.cb{font-size:12px;color:#1a1a1a;background:#f0ead8;padding:8px 10px;border-radius:4px;line-height:1.6;min-height:44px;}
+.cf{margin-top:12px;font-size:10px;color:#888;text-align:right;}
+.cdbox{background:#f0f4ff;border:3px dashed #1a5fa8;border-radius:12px;padding:clamp(14px,4vw,20px) clamp(24px,8vw,40px);font-size:clamp(22px,7vw,32px);font-weight:700;letter-spacing:clamp(4px,2vw,8px);color:#1a237e;text-align:center;}
+.bfw{flex:1;display:flex;flex-direction:column;max-width:480px;width:100%;margin:0 auto;padding:clamp(14px,4vw,20px) var(--pad);}
+.lbx{flex:1;background:white;border-radius:12px;border:2px solid #1a5fa8;padding:clamp(10px,3vw,14px);box-shadow:0 2px 12px rgba(26,95,168,.1);font-size:var(--fsm);line-height:1.7;}
+.ebx{background:white;border-radius:12px;border:2px solid #1a5fa8;padding:clamp(10px,3vw,16px);}
+.ibx{background:white;border-radius:12px;border:2px solid #c8a060;padding:clamp(10px,3vw,16px);margin-bottom:14px;}
+.fta{width:100%;padding:10px;border-radius:8px;border:1.5px solid #c8a060;font-size:var(--fsm);resize:none;line-height:1.7;}
+.wc{background:#f0f4ff;border-radius:12px;padding:clamp(16px,5vw,24px);text-align:center;width:100%;max-width:320px;}
 /* 팝업 */
-.popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;display:none;align-items:center;justify-content:center;padding:var(--pad);}
-.popup-overlay.active{display:flex;}
-.popup-box{background:white;border-radius:16px;padding:clamp(20px,6vw,36px);text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.3);max-width:300px;width:100%;}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;display:none;align-items:center;justify-content:center;padding:var(--pad);}
+.ov.on{display:flex;}
+.ob{background:white;border-radius:16px;padding:clamp(20px,6vw,36px);text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.3);max-width:300px;width:100%;}
+/* 재판 */
+#pg-trial{position:fixed;inset:0;overflow:hidden;display:none;}
+#pg-trial.on{display:flex;}
+.cvw{position:absolute;inset:0;}
+.cvw svg{width:100%;height:100%;}
+.tov{position:absolute;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.7);}
+.gb{font-size:clamp(60px,18vw,110px);filter:drop-shadow(0 4px 20px rgba(255,200,0,.7));transition:font-size .15s;}
+.ot{color:#FFD700;font-size:clamp(16px,5vw,22px);font-weight:900;margin-top:16px;letter-spacing:clamp(3px,1.5vw,6px);text-shadow:0 2px 8px rgba(0,0,0,.8);}
+.cbn{position:absolute;top:0;left:0;right:0;background:rgba(10,10,40,.88);padding:7px 12px;text-align:center;z-index:20;border-bottom:2px solid #8B6340;font-size:clamp(10px,2.8vw,13px);color:#FFD700;font-weight:700;}
+.cl{position:absolute;inset:0;z-index:10;pointer-events:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 clamp(4px,2vw,16px) clamp(8px,3vw,20px);}
+.cs2{display:flex;flex-direction:column;align-items:center;gap:4px;transition:opacity .4s;}
+.cs2 svg{width:clamp(60px,16vw,110px);height:auto;}
+.clb{font-size:clamp(8px,2.2vw,11px);padding:2px 8px;border-radius:5px;font-weight:700;white-space:nowrap;}
+.bub{background:rgba(255,255,255,.97);border-radius:14px;padding:clamp(7px,2vw,11px) clamp(8px,2.5vw,14px);font-size:clamp(10px,2.8vw,13px);line-height:1.6;color:#111;box-shadow:0 4px 16px rgba(0,0,0,.25);margin-bottom:6px;max-width:clamp(140px,38vw,200px);position:relative;word-break:keep-all;}
+.btl{position:absolute;bottom:-9px;left:20px;width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;}
+.btr{position:absolute;bottom:-9px;right:20px;width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;}
+.jbw{position:absolute;left:50%;transform:translateX(-50%);bottom:clamp(155px,42vw,260px);z-index:15;display:flex;flex-direction:column;align-items:center;}
+.jbb{background:rgba(255,248,220,.97);border:2.5px solid #8B6340;border-radius:14px;padding:10px 14px;font-size:clamp(10px,2.8vw,12px);line-height:1.6;color:#111;text-align:center;max-width:clamp(160px,44vw,220px);box-shadow:0 4px 16px rgba(0,0,0,.3);}
+/* 판결 */
+#pg-verdict{position:fixed;inset:0;overflow-y:auto;background:linear-gradient(180deg,#0a0a2e,#1a1a5e 60%,#0a0a2e);z-index:200;display:none;flex-direction:column;align-items:center;justify-content:center;padding:clamp(16px,5vw,28px);}
+#pg-verdict.on{display:flex;}
+.vi{width:100%;max-width:420px;display:flex;flex-direction:column;gap:clamp(10px,3vw,14px);}
+.fb{height:24px;border-radius:12px;overflow:hidden;background:#333;display:flex;margin-top:10px;}
+.fp{background:linear-gradient(90deg,#74b9ff,#0984e3);display:flex;align-items:center;justify-content:center;transition:width 1.2s ease;}
+.fd{background:linear-gradient(90deg,#fd79a8,#e17055);display:flex;align-items:center;justify-content:center;transition:width 1.2s ease;}
+.fl{color:white;font-size:10px;font-weight:700;}
 /* 입장 오버레이 */
-#entry-overlay{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:300;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
-#entry-overlay.active{display:flex;}
+#ov-entry{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:300;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
+#ov-entry.on{display:flex;}
+/* 체포 오버레이 */
+#ov-arrest{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:400;display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px;}
+#ov-arrest.on{display:flex;}
 @keyframes dropIn{from{opacity:0;transform:translateY(-60px)}to{opacity:1;transform:translateY(0)}}
-@keyframes stampAnim{0%{transform:rotate(15deg) scale(3);opacity:0}50%{transform:rotate(15deg) scale(1.2);opacity:1}100%{transform:rotate(15deg) scale(1);opacity:.7}}
-.nav-btn{background:none;border:none;font-size:clamp(9px,2.5vw,12px);color:#555;cursor:pointer;padding:4px 6px;white-space:nowrap;}
-/* 멀티 대기 상태 */
-.status-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px;}
-.dot-green{background:#27ae60;}
-.dot-orange{background:#e67e22;animation:pulse 1s infinite;}
+@keyframes stampAnim{0%{transform:rotate(15deg) scale(3);opacity:0}100%{transform:rotate(15deg) scale(1);opacity:.7}}
+.nb{background:none;border:none;font-size:clamp(9px,2.5vw,12px);color:#555;cursor:pointer;padding:4px 6px;white-space:nowrap;}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px;}
+.dg{background:#27ae60;}
+.do{background:#e67e22;animation:pulse 1s infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+/* 판결문 열람 */
+#ov-verdicts{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;display:none;align-items:flex-start;justify-content:center;padding:0;}
+#ov-verdicts.on{display:flex;}
 </style>
 </head>
 <body>
 
-<!-- 팝업들 -->
-<div class="popup-overlay" id="popup-egg1" onclick="closePopup('popup-egg1')">
-  <div class="popup-box" onclick="event.stopPropagation()">
+<!-- ══ 팝업들 ══ -->
+<div class="ov" id="ov-nav" onclick="cpop('ov-nav')">
+  <div class="ob" onclick="event.stopPropagation()">
+    <div style="font-size:32px;margin-bottom:12px">🕊️</div>
+    <div style="font-size:clamp(14px,4vw,17px);font-weight:700;color:#1a237e;margin-bottom:20px">윤원이와 싸우지 마세요...</div>
+    <button onclick="cpop('ov-nav')" class="bp" style="max-width:160px;padding:10px 24px">확인</button>
+  </div>
+</div>
+<div class="ov" id="ov-egg1" onclick="cpop('ov-egg1')">
+  <div class="ob" onclick="event.stopPropagation()">
     <div style="font-size:40px;margin-bottom:12px">📜</div>
     <div style="font-size:15px;font-weight:900;color:#1a237e;margin-bottom:8px">전자소송 안내</div>
     <div style="font-size:13px;color:#555;line-height:1.7;margin-bottom:16px">유진아, 소송 걸지 말고<br>그냥 사과해 🙏<br><br><span style="font-size:11px;color:#aaa">— 윤원가정법원 일동</span></div>
-    <button onclick="closePopup('popup-egg1')" class="btn-primary" style="max-width:160px;padding:10px 24px">알겠습니다</button>
+    <button onclick="cpop('ov-egg1')" class="bp" style="max-width:160px;padding:10px 24px">알겠습니다</button>
   </div>
 </div>
-<!-- 판결문 열람 페이지 -->
-<div class="popup-overlay" id="popup-egg2" onclick="closePopup('popup-egg2')" style="align-items:flex-start;padding:0;">
-  <div onclick="event.stopPropagation()" style="width:100%;max-width:520px;height:100dvh;background:white;display:flex;flex-direction:column;margin:0 auto;overflow:hidden;">
-    <!-- 헤더 -->
-    <div style="background:linear-gradient(135deg,#1a237e,#1a5fa8);padding:16px var(--pad);display:flex;align-items:center;gap:12px;flex-shrink:0;">
-      <img src="https://raw.githubusercontent.com/qpwoeiyunwon/itsallyujinsfault/main/courtmark2.png" style="width:32px;height:32px;object-fit:contain;"/>
-      <div>
-        <div style="color:white;font-weight:900;font-size:var(--font-lg);letter-spacing:1px">판결문 열람</div>
-        <div style="color:rgba(255,255,255,.7);font-size:10px">윤원가정법원 전자소송 시스템</div>
-      </div>
-      <div style="flex:1"></div>
-      <button onclick="closePopup('popup-egg2')" style="background:rgba(255,255,255,.2);border:none;color:white;width:32px;height:32px;border-radius:50%;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;">✕</button>
-    </div>
-    <!-- 검색창 -->
-    <div style="padding:12px var(--pad);border-bottom:1px solid #eee;flex-shrink:0;background:#f8f9ff;">
-      <div style="position:relative;">
-        <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:16px;">🔍</span>
-        <input id="verdict-search" type="text" placeholder="사건명, 판결 이유, 화해 명령 검색..."
-          style="width:100%;padding:11px 12px 11px 38px;border:1.5px solid #1a5fa8;border-radius:10px;font-size:var(--font-sm);outline:none;font-family:inherit;box-sizing:border-box;"
-          oninput="filterVerdicts(this.value)"/>
-      </div>
-      <div style="margin-top:8px;font-size:10px;color:#888" id="verdict-count"></div>
-    </div>
-    <!-- 판결문 목록 -->
-    <div id="verdict-list" style="flex:1;overflow-y:auto;padding:12px var(--pad);display:flex;flex-direction:column;gap:12px;">
-      <div style="text-align:center;padding:40px 0;color:#aaa;font-size:var(--font-sm)">⏳ 판결문을 불러오는 중...</div>
-    </div>
-  </div>
-</div>
-<div class="popup-overlay" id="popup-egg3" onclick="closePopup('popup-egg3')">
-  <div class="popup-box" onclick="event.stopPropagation()">
+<div class="ov" id="ov-egg3" onclick="cpop('ov-egg3')">
+  <div class="ob" onclick="event.stopPropagation()">
     <div style="font-size:40px;margin-bottom:12px">📱</div>
     <div style="font-size:15px;font-weight:900;color:#1a237e;margin-bottom:8px">이용 안내</div>
     <div style="font-size:13px;color:#555;line-height:1.7;margin-bottom:16px">본 법원은 연인 간 분쟁만<br>취급합니다.<br><br>싸우지 말고 사랑하세요 💕<br><br><span style="font-size:11px;color:#aaa">운영시간: 24시간 (싸울 때마다)</span></div>
-    <button onclick="closePopup('popup-egg3')" class="btn-primary" style="max-width:160px;padding:10px 24px">명심하겠습니다</button>
+    <button onclick="cpop('ov-egg3')" class="bp" style="max-width:160px;padding:10px 24px">명심하겠습니다</button>
   </div>
 </div>
-
-<!-- 유진 이스터에그 팝업 -->
-<div class="popup-overlay" id="popup-yujin" onclick="event.stopPropagation()">
-  <div class="popup-box" onclick="event.stopPropagation()">
+<div class="ov" id="ov-yujin" onclick="event.stopPropagation()">
+  <div class="ob" onclick="event.stopPropagation()">
     <div style="font-size:40px;margin-bottom:12px">🤔</div>
     <div style="font-size:15px;font-weight:900;color:#1a237e;margin-bottom:12px">정말 입장하시겠어요?</div>
-    <div style="font-size:13px;color:#555;line-height:1.8;margin-bottom:20px">
-      <span id="yujin-name-display"></span>님이 윤원님에게<br>잘못한건 아닌지<br>다시 한번 생각해보아요 🕊️
-    </div>
+    <div style="font-size:13px;color:#555;line-height:1.8;margin-bottom:20px"><span id="yujin-nm"></span>님이 윤원님에게<br>잘못한건 아닌지<br>다시 한번 생각해보아요 🕊️</div>
     <div style="display:flex;flex-direction:column;gap:8px;">
-      <button onclick="confirmYujinEntry()" class="btn-primary" style="max-width:100%;padding:12px">그래도 입장하기</button>
-      <button onclick="closePopup('popup-yujin')" style="background:none;border:1.5px solid #ddd;border-radius:var(--radius);padding:10px;font-size:var(--font-sm);color:#888;cursor:pointer;">다시 생각해볼게요...</button>
+      <button onclick="confirmYujin()" class="bp" style="max-width:100%;padding:12px">그래도 입장하기</button>
+      <button onclick="cpop('ov-yujin')" style="background:none;border:1.5px solid #ddd;border-radius:var(--r);padding:10px;font-size:var(--fsm);color:#888;cursor:pointer;">다시 생각해볼게요...</button>
     </div>
   </div>
 </div>
-
-<!-- 판사 로비 페이지 -->
-<div class="screen" id="s-lobby-judge">
-  <div class="topbar">
-    <div style="display:flex;align-items:center;gap:8px">
-      <img src="https://raw.githubusercontent.com/qpwoeiyunwon/itsallyujinsfault/main/courtmark2.png" style="width:28px;height:28px;object-fit:contain;"/>
-      <span class="topbar-title">윤원가정법원</span>
-    </div>
-    <span style="font-size:var(--font-sm);color:#c0392b;margin-left:8px">⚠️ 기밀</span>
-  </div>
-  <div class="center-wrap" style="gap:20px;">
-    <div style="font-size:40px">👨‍⚖️</div>
-    <div style="font-size:var(--font-lg);font-weight:900;color:#1a237e;text-align:center;">판사에게 로비하시겠습니까?</div>
-    <div style="font-size:var(--font-sm);color:#888;text-align:center;line-height:1.7;">이 내용은 철저히 기밀로 유지됩니다.<br>아무도 모를 거예요... 🤫</div>
-    <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:300px;">
-      <button class="btn-primary" onclick="showJudgePick()" style="background:linear-gradient(135deg,#c0392b,#922b21);">예, 로비하겠습니다 💰</button>
-      <button onclick="goCounter()" style="background:none;border:1.5px solid #ddd;border-radius:var(--radius);padding:var(--btn-pad);font-size:var(--font-base);color:#888;cursor:pointer;">아니오, 정정당당하게</button>
-    </div>
-  </div>
-</div>
-
-<!-- 판사 선택 페이지 -->
-<div class="screen" id="s-judge-pick">
-  <div class="topbar">
-    <div style="display:flex;align-items:center;gap:8px">
-      <img src="https://raw.githubusercontent.com/qpwoeiyunwon/itsallyujinsfault/main/courtmark2.png" style="width:28px;height:28px;object-fit:contain;"/>
-      <span class="topbar-title">윤원가정법원</span>
-    </div>
-    <span style="font-size:var(--font-sm);color:#c0392b;margin-left:8px">⚠️ 기밀</span>
-  </div>
-  <div class="center-wrap" style="gap:20px;">
-    <div style="font-size:var(--font-lg);font-weight:900;color:#1a237e;text-align:center;">판사를 선택하세요</div>
-    <div style="font-size:var(--font-sm);color:#888;text-align:center;">원하시는 판사를 선택해주세요 😏</div>
-    <div style="display:flex;flex-direction:column;gap:12px;width:100%;max-width:300px;">
-      <!-- 엄격한 판사 (상대방에게) -->
-      <button onclick="selectJudge('strict')" style="background:white;border:2px solid #1a237e;border-radius:12px;padding:16px;text-align:left;cursor:pointer;transition:all .2s;"
-        onmouseover="this.style.background='#f0f4ff'" onmouseout="this.style.background='white'">
-        <div style="font-size:20px;margin-bottom:6px">😤</div>
-        <div style="font-size:var(--font-base);font-weight:700;color:#1a237e;">상대방에게 엄격한 판사</div>
-        <div style="font-size:var(--font-sm);color:#888;margin-top:4px;">판사 김엄격 — 상대방을 가차없이 몰아붙이는 판사</div>
-      </button>
-      <!-- 관대한 판사 (나에게) -->
-      <button onclick="selectJudge('lenient')" style="background:white;border:2px solid #27ae60;border-radius:12px;padding:16px;text-align:left;cursor:pointer;transition:all .2s;"
-        onmouseover="this.style.background='#f0fff4'" onmouseout="this.style.background='white'">
-        <div style="font-size:20px;margin-bottom:6px">😊</div>
-        <div style="font-size:var(--font-base);font-weight:700;color:#27ae60;">나에게 관대한 판사</div>
-        <div style="font-size:var(--font-sm);color:#888;margin-top:4px;">판사 이관대 — 원고의 입장을 깊이 이해하는 판사</div>
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- 금품 전달 팝업 -->
-<div class="popup-overlay" id="popup-bribe" onclick="event.stopPropagation()">
-  <div class="popup-box" onclick="event.stopPropagation()">
+<div class="ov" id="ov-bribe" onclick="event.stopPropagation()">
+  <div class="ob" onclick="event.stopPropagation()">
     <div style="font-size:48px;margin-bottom:12px" id="bribe-icon">💰</div>
-    <div style="font-size:15px;font-weight:900;color:#1a237e;margin-bottom:8px" id="bribe-judge-name"></div>
-    <div style="font-size:13px;color:#555;line-height:1.8;margin-bottom:4px">판사에게 금품을 건네주었습니다.</div>
+    <div style="font-size:15px;font-weight:900;color:#1a237e;margin-bottom:8px" id="bribe-name"></div>
+    <div style="font-size:13px;color:#555;margin-bottom:4px">판사에게 금품을 건네주었습니다.</div>
     <div style="font-size:12px;color:#aaa;margin-bottom:20px">아무도 모를 거예요... 🤫</div>
     <div style="width:100%;background:#eee;border-radius:4px;height:6px;margin-bottom:20px;overflow:hidden;">
-      <div id="bribe-progress" style="height:100%;background:linear-gradient(90deg,#f39c12,#FFD700);width:0%;transition:width 2s ease;border-radius:4px;"></div>
+      <div id="bribe-bar" style="height:100%;background:linear-gradient(90deg,#f39c12,#FFD700);width:0%;transition:width 2s ease;border-radius:4px;"></div>
     </div>
-    <div style="font-size:11px;color:#888" id="bribe-status">거래 진행 중...</div>
+    <div style="font-size:11px;color:#888" id="bribe-st">거래 진행 중...</div>
   </div>
 </div>
 
-<!-- 체포 애니메이션 오버레이 -->
-<div id="arrest-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:400;display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px;font-family:'Noto Sans KR',sans-serif;">
-  <div style="color:#ff4444;font-size:clamp(20px,6vw,28px);font-weight:900;letter-spacing:2px;text-align:center;" id="arrest-title">🚨 잠깐!!!</div>
-  <div id="arrest-scene" style="position:relative;width:clamp(280px,75vw,360px);height:160px;">
-    <!-- 경찰 SVG -->
-    <div id="arrest-cop" style="position:absolute;left:-80px;bottom:0;transition:left 1s ease;">
-      <svg width="70" height="110" viewBox="0 0 70 110">
-        <!-- 다리 -->
-        <rect x="22" y="78" width="11" height="28" rx="4" fill="#1a237e"/>
-        <rect x="37" y="78" width="11" height="28" rx="4" fill="#1a237e"/>
-        <!-- 몸 -->
-        <rect x="14" y="40" width="42" height="42" rx="6" fill="#1a5fa8"/>
-        <!-- 배지 -->
-        <polygon points="28,52 35,48 42,52 40,60 30,60" fill="#FFD700"/>
-        <circle cx="35" cy="55" r="3" fill="#1a237e"/>
-        <!-- 팔 (잡는 포즈) -->
-        <line x1="14" y1="50" x2="2" y2="65" stroke="#1a5fa8" stroke-width="10" stroke-linecap="round"/>
-        <line x1="56" y1="50" x2="68" y2="42" stroke="#1a5fa8" stroke-width="10" stroke-linecap="round"/>
-        <!-- 목 -->
-        <rect x="30" y="30" width="10" height="12" rx="4" fill="#F5C5A3"/>
-        <!-- 얼굴 -->
-        <circle cx="35" cy="22" r="18" fill="#F5C5A3"/>
-        <!-- 경찰 모자 -->
-        <rect x="18" y="8" width="34" height="8" rx="2" fill="#1a237e"/>
-        <rect x="14" y="13" width="42" height="4" rx="2" fill="#1a237e"/>
-        <rect x="22" y="5" width="26" height="8" rx="3" fill="#1a237e"/>
-        <rect x="28" y="8" width="14" height="5" rx="2" fill="#FFD700"/>
-        <!-- 눈 -->
-        <circle cx="28" cy="21" r="3" fill="#333"/>
-        <circle cx="42" cy="21" r="3" fill="#333"/>
-        <!-- 선글라스 -->
-        <rect x="22" y="18" width="14" height="7" rx="3" fill="#333" opacity=".8"/>
-        <rect x="34" y="18" width="14" height="7" rx="3" fill="#333" opacity=".8"/>
-        <line x1="36" y1="21" x2="34" y2="21" stroke="#555" stroke-width="2"/>
-      </svg>
+<!-- ══ 판결문 열람 팝업 ══ -->
+<div id="ov-verdicts" onclick="cpop('ov-verdicts')">
+  <div onclick="event.stopPropagation()" style="width:100%;max-width:520px;height:100dvh;background:white;display:flex;flex-direction:column;margin:0 auto;overflow:hidden;">
+    <div style="background:linear-gradient(135deg,#1a237e,#1a5fa8);padding:16px var(--pad);display:flex;align-items:center;gap:12px;flex-shrink:0;">
+      <img src="https://raw.githubusercontent.com/qpwoeiyunwon/itsallyujinsfault/main/courtmark2.png" style="width:32px;height:32px;object-fit:contain;"/>
+      <div><div style="color:white;font-weight:900;font-size:var(--fsl)">판결문 열람</div><div style="color:rgba(255,255,255,.7);font-size:10px">윤원가정법원 전자소송 시스템</div></div>
+      <div style="flex:1"></div>
+      <button onclick="cpop('ov-verdicts')" style="background:rgba(255,255,255,.2);border:none;color:white;width:32px;height:32px;border-radius:50%;font-size:18px;cursor:pointer;">✕</button>
     </div>
-    <!-- 유진 캐릭터 -->
-    <div id="arrest-yujin" style="position:absolute;right:40px;bottom:0;transition:right 1.5s ease;">
-      <svg width="55" height="100" viewBox="0 0 55 100">
-        <rect x="18" y="68" width="9" height="28" rx="4" fill="#c0392b"/>
-        <rect x="30" y="68" width="9" height="28" rx="4" fill="#c0392b"/>
-        <path d="M10 38 Q8 55 10 70 L46 70 Q48 55 46 38 Z" fill="#e74c3c"/>
-        <rect x="23" y="28" width="10" height="12" rx="4" fill="#F5C5A3"/>
-        <ellipse cx="27" cy="18" rx="16" ry="18" fill="#F5C5A3"/>
-        <path d="M12 12 Q16 2 27 4 Q38 2 42 12 Q36 6 27 8 Q18 6 12 12Z" fill="#2c1a0a"/>
-        <circle cx="21" cy="16" r="3" fill="#333"/>
-        <circle cx="33" cy="16" r="3" fill="#333"/>
-        <path d="M21 24 Q27 28 33 24" stroke="#c0392b" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-        <!-- 손에 돈 -->
-        <rect x="44" y="45" width="14" height="8" rx="2" fill="#27ae60"/>
-        <text x="51" y="52" text-anchor="middle" font-size="6" fill="white" font-weight="bold">$</text>
-      </svg>
+    <div style="padding:12px var(--pad);border-bottom:1px solid #eee;flex-shrink:0;background:#f8f9ff;">
+      <div style="position:relative;">
+        <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:16px;">🔍</span>
+        <input id="vsearch" type="text" placeholder="사건명, 판결 이유, 화해 명령 검색..."
+          style="width:100%;padding:11px 12px 11px 38px;border:1.5px solid #1a5fa8;border-radius:10px;font-size:var(--fsm);outline:none;font-family:inherit;box-sizing:border-box;"
+          oninput="filterVerdicts(this.value)"/>
+      </div>
+      <div style="margin-top:8px;font-size:10px;color:#888" id="vcnt"></div>
     </div>
-    <!-- 감옥 -->
-    <div id="arrest-jail" style="position:absolute;right:-120px;bottom:0;transition:right 1.5s ease 0.5s;">
-      <svg width="90" height="110" viewBox="0 0 90 110">
-        <rect x="5" y="20" width="80" height="90" rx="4" fill="#555"/>
-        <rect x="5" y="10" width="80" height="16" rx="4" fill="#444"/>
-        <text x="45" y="22" text-anchor="middle" font-size="9" fill="#FFD700" font-weight="bold">교도소</text>
-        {[0,1,2,3,4].map(i=>`<rect x="${15+i*14}" y="30" width="6" height="70" rx="2" fill="#333"/>`).join('')}
-        <rect x="5" y="95" width="80" height="8" rx="2" fill="#444"/>
-      </svg>
+    <div id="vlist" style="flex:1;overflow-y:auto;padding:12px var(--pad);display:flex;flex-direction:column;gap:12px;">
+      <div style="text-align:center;padding:40px 0;color:#aaa;font-size:var(--fsm)">⏳ 판결문을 불러오는 중...</div>
     </div>
   </div>
-  <div style="color:white;font-size:clamp(13px,3.5vw,16px);text-align:center;max-width:320px;line-height:1.7;padding:0 20px;" id="arrest-msg"></div>
 </div>
-<div id="entry-overlay">
-  <div id="entry-phase0" style="display:flex;flex-direction:column;align-items:center;gap:16px">
-    <div style="color:white;font-size:var(--font-base)">📬 고소장을 수령했습니다</div>
-    <div style="animation:dropIn .8s cubic-bezier(.2,1,.4,1) forwards" id="entry-complaint"></div>
+
+<!-- ══ 입장 오버레이 ══ -->
+<div id="ov-entry">
+  <div id="ep0" style="display:flex;flex-direction:column;align-items:center;gap:16px">
+    <div style="color:white;font-size:var(--fs)">📬 고소장을 수령했습니다</div>
+    <div style="animation:dropIn .8s cubic-bezier(.2,1,.4,1) forwards" id="ec"></div>
   </div>
-  <div id="entry-phase1" style="display:none;flex-direction:column;align-items:center;gap:20px">
+  <div id="ep1" style="display:none;flex-direction:column;align-items:center;gap:20px">
     <div style="position:relative;width:clamp(280px,75vw,380px);height:clamp(200px,50vw,280px)">
       <svg viewBox="0 0 380 260" style="width:100%;height:100%">
         <defs>
-          <linearGradient id="skyG" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" style="stop-color:#1a237e"/>
-            <stop offset="100%" style="stop-color:#3949ab"/>
-          </linearGradient>
-          <linearGradient id="buildG" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" style="stop-color:#f5f0e8"/>
-            <stop offset="100%" style="stop-color:#e0d5c0"/>
-          </linearGradient>
+          <linearGradient id="sg" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#1a237e"/><stop offset="100%" style="stop-color:#3949ab"/></linearGradient>
+          <linearGradient id="bg2" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#f5f0e8"/><stop offset="100%" style="stop-color:#e0d5c0"/></linearGradient>
         </defs>
-        <rect width="380" height="260" fill="url(#skyG)"/>
-        <circle cx="30" cy="20" r="1.5" fill="white" opacity=".8"/>
-        <circle cx="80" cy="10" r="1" fill="white" opacity=".6"/>
-        <circle cx="300" cy="15" r="1.5" fill="white" opacity=".8"/>
-        <circle cx="350" cy="25" r="1" fill="white" opacity=".6"/>
+        <rect width="380" height="260" fill="url(#sg)"/>
+        <circle cx="30" cy="20" r="1.5" fill="white" opacity=".8"/><circle cx="300" cy="15" r="1.5" fill="white" opacity=".8"/>
         <rect x="20" y="200" width="340" height="60" fill="#c8b898"/>
         <rect x="30" y="195" width="320" height="10" rx="2" fill="#d4c4a0"/>
         <rect x="50" y="188" width="280" height="10" rx="2" fill="#ddd0b0"/>
         <rect x="70" y="181" width="240" height="10" rx="2" fill="#e8dcc0"/>
-        <rect x="60" y="80" width="260" height="108" fill="url(#buildG)"/>
+        <rect x="60" y="80" width="260" height="108" fill="url(#bg2)"/>
         <rect x="120" y="60" width="140" height="128" fill="#f0ead8"/>
         <polygon points="100,80 190,20 280,80" fill="#e8dcc0" stroke="#c8b090" stroke-width="2"/>
         <polygon points="130,80 190,35 250,80" fill="#f5f0e8"/>
-        <circle cx="190" cy="58" r="16" fill="#1a237e"/>
-        <circle cx="190" cy="58" r="12" fill="#c8a060"/>
-        <circle cx="190" cy="58" r="8" fill="#1a237e"/>
+        <circle cx="190" cy="58" r="16" fill="#1a237e"/><circle cx="190" cy="58" r="12" fill="#c8a060"/><circle cx="190" cy="58" r="8" fill="#1a237e"/>
         <text x="190" y="63" text-anchor="middle" font-size="10" fill="#FFD700" font-weight="bold">⚖</text>
-        <rect x="75" y="80" width="18" height="108" rx="4" fill="#e8e0cc"/>
-        <rect x="108" y="80" width="18" height="108" rx="4" fill="#e8e0cc"/>
-        <rect x="141" y="60" width="16" height="128" rx="4" fill="#ede5d0"/>
-        <rect x="165" y="60" width="16" height="128" rx="4" fill="#ede5d0"/>
-        <rect x="199" y="60" width="16" height="128" rx="4" fill="#ede5d0"/>
-        <rect x="223" y="60" width="16" height="128" rx="4" fill="#ede5d0"/>
-        <rect x="254" y="80" width="18" height="108" rx="4" fill="#e8e0cc"/>
-        <rect x="287" y="80" width="18" height="108" rx="4" fill="#e8e0cc"/>
-        <rect x="60" y="78" width="260" height="6" fill="#c8b090"/>
-        <rect x="118" y="58" width="144" height="6" fill="#c8b090"/>
+        <rect x="75" y="80" width="18" height="108" rx="4" fill="#e8e0cc"/><rect x="108" y="80" width="18" height="108" rx="4" fill="#e8e0cc"/>
+        <rect x="141" y="60" width="16" height="128" rx="4" fill="#ede5d0"/><rect x="165" y="60" width="16" height="128" rx="4" fill="#ede5d0"/>
+        <rect x="199" y="60" width="16" height="128" rx="4" fill="#ede5d0"/><rect x="223" y="60" width="16" height="128" rx="4" fill="#ede5d0"/>
+        <rect x="254" y="80" width="18" height="108" rx="4" fill="#e8e0cc"/><rect x="287" y="80" width="18" height="108" rx="4" fill="#e8e0cc"/>
+        <rect x="60" y="78" width="260" height="6" fill="#c8b090"/><rect x="118" y="58" width="144" height="6" fill="#c8b090"/>
         <rect x="162" y="148" width="56" height="40" rx="4" fill="#5a3a1a"/>
-        <rect x="166" y="148" width="22" height="38" rx="2" fill="#4a2a10"/>
-        <rect x="192" y="148" width="22" height="38" rx="2" fill="#4a2a10"/>
         <path d="M162 152 Q190 138 218 152" fill="#6a4a2a"/>
-        <rect x="85" y="100" width="28" height="35" rx="3" fill="#b8d4e8" opacity=".8"/>
-        <rect x="267" y="100" width="28" height="35" rx="3" fill="#b8d4e8" opacity=".8"/>
         <rect x="140" y="112" width="100" height="20" rx="3" fill="#1a237e"/>
         <text x="190" y="126" text-anchor="middle" font-size="9" fill="#FFD700" font-weight="bold" letter-spacing="1">윤원가정법원</text>
         <line x1="50" y1="80" x2="50" y2="195" stroke="#888" stroke-width="2"/>
@@ -375,7 +228,7 @@ textarea,input{font-family:inherit;}
         <circle cx="67" cy="91" r="7" fill="none" stroke="#c0392b" stroke-width="2"/>
         <line x1="60" y1="91" x2="75" y2="91" stroke="#1a5fa8" stroke-width="1.5"/>
         <line x1="67" y1="84" x2="67" y2="99" stroke="#1a5fa8" stroke-width="1.5"/>
-        <g id="walk-svg" style="transition:transform 2.5s ease-in-out" transform="translate(-50,175)">
+        <g id="ws" style="transition:transform 2.5s ease-in-out" transform="translate(-50,175)">
           <circle cx="18" cy="8" r="7" fill="#F5D76E"/>
           <rect x="12" y="16" width="12" height="18" rx="3" fill="#1a5fa8"/>
           <line x1="12" y1="20" x2="5" y2="30" stroke="#1a5fa8" stroke-width="3" stroke-linecap="round"/>
@@ -385,85 +238,190 @@ textarea,input{font-family:inherit;}
         </g>
       </svg>
     </div>
-    <div style="color:white;font-size:var(--font-base);font-weight:700;letter-spacing:2px">법원에 입장합니다...</div>
+    <div style="color:white;font-size:var(--fs);font-weight:700;letter-spacing:2px">법원에 입장합니다...</div>
   </div>
 </div>
 
-<!-- INTRO -->
-<div class="screen active" id="s-intro">
+<!-- ══ 체포 오버레이 ══ -->
+<div id="ov-arrest">
+  <div style="color:#ff4444;font-size:clamp(20px,6vw,28px);font-weight:900;letter-spacing:2px;text-align:center;" id="arr-title">🚨 잠깐!!!</div>
+  <div style="position:relative;width:clamp(280px,75vw,360px);height:160px;">
+    <div id="arr-cop" style="position:absolute;left:-80px;bottom:0;transition:left 1s ease;">
+      <svg width="70" height="110" viewBox="0 0 70 110">
+        <rect x="22" y="78" width="11" height="28" rx="4" fill="#1a237e"/>
+        <rect x="37" y="78" width="11" height="28" rx="4" fill="#1a237e"/>
+        <rect x="14" y="40" width="42" height="42" rx="6" fill="#1a5fa8"/>
+        <polygon points="28,52 35,48 42,52 40,60 30,60" fill="#FFD700"/>
+        <circle cx="35" cy="55" r="3" fill="#1a237e"/>
+        <line x1="14" y1="50" x2="2" y2="65" stroke="#1a5fa8" stroke-width="10" stroke-linecap="round"/>
+        <line x1="56" y1="50" x2="68" y2="42" stroke="#1a5fa8" stroke-width="10" stroke-linecap="round"/>
+        <rect x="30" y="30" width="10" height="12" rx="4" fill="#F5C5A3"/>
+        <circle cx="35" cy="22" r="18" fill="#F5C5A3"/>
+        <rect x="18" y="8" width="34" height="8" rx="2" fill="#1a237e"/>
+        <rect x="14" y="13" width="42" height="4" rx="2" fill="#1a237e"/>
+        <rect x="22" y="5" width="26" height="8" rx="3" fill="#1a237e"/>
+        <rect x="28" y="8" width="14" height="5" rx="2" fill="#FFD700"/>
+        <circle cx="28" cy="21" r="3" fill="#333"/>
+        <circle cx="42" cy="21" r="3" fill="#333"/>
+        <rect x="22" y="18" width="14" height="7" rx="3" fill="#333" opacity=".8"/>
+        <rect x="34" y="18" width="14" height="7" rx="3" fill="#333" opacity=".8"/>
+        <line x1="36" y1="21" x2="34" y2="21" stroke="#555" stroke-width="2"/>
+      </svg>
+    </div>
+    <div id="arr-yujin" style="position:absolute;right:40px;bottom:0;transition:right 1.5s ease;">
+      <svg width="55" height="100" viewBox="0 0 55 100">
+        <rect x="18" y="68" width="9" height="28" rx="4" fill="#c0392b"/>
+        <rect x="30" y="68" width="9" height="28" rx="4" fill="#c0392b"/>
+        <path d="M10 38 Q8 55 10 70 L46 70 Q48 55 46 38 Z" fill="#e74c3c"/>
+        <rect x="23" y="28" width="10" height="12" rx="4" fill="#F5C5A3"/>
+        <ellipse cx="27" cy="18" rx="16" ry="18" fill="#F5C5A3"/>
+        <path d="M12 12 Q16 2 27 4 Q38 2 42 12 Q36 6 27 8 Q18 6 12 12Z" fill="#2c1a0a"/>
+        <circle cx="21" cy="16" r="3" fill="#333"/>
+        <circle cx="33" cy="16" r="3" fill="#333"/>
+        <rect x="44" y="45" width="14" height="8" rx="2" fill="#27ae60"/>
+        <text x="51" y="52" text-anchor="middle" font-size="6" fill="white" font-weight="bold">$</text>
+      </svg>
+    </div>
+    <div id="arr-jail" style="position:absolute;right:-120px;bottom:0;transition:right 1.5s ease 0.5s;">
+      <svg width="90" height="110" viewBox="0 0 90 110">
+        <rect x="5" y="20" width="80" height="90" rx="4" fill="#555"/>
+        <rect x="5" y="10" width="80" height="16" rx="4" fill="#444"/>
+        <text x="45" y="22" text-anchor="middle" font-size="9" fill="#FFD700" font-weight="bold">교도소</text>
+        <rect x="15" y="30" width="6" height="70" rx="2" fill="#333"/>
+        <rect x="29" y="30" width="6" height="70" rx="2" fill="#333"/>
+        <rect x="43" y="30" width="6" height="70" rx="2" fill="#333"/>
+        <rect x="57" y="30" width="6" height="70" rx="2" fill="#333"/>
+        <rect x="71" y="30" width="6" height="70" rx="2" fill="#333"/>
+        <rect x="5" y="95" width="80" height="8" rx="2" fill="#444"/>
+      </svg>
+    </div>
+  </div>
+  <div style="color:white;font-size:clamp(13px,3.5vw,16px);text-align:center;max-width:320px;line-height:1.7;padding:0 20px;" id="arr-msg"></div>
+</div>
+
+<!-- ══ INTRO ══ -->
+<div class="pg on" id="pg-intro">
   <div class="topbar">
     <div style="display:flex;align-items:center;gap:8px">
       <img src="https://raw.githubusercontent.com/qpwoeiyunwon/itsallyujinsfault/main/courtmark2.png" style="width:clamp(24px,6vw,34px);height:clamp(24px,6vw,34px);object-fit:contain;"/>
-      <span class="topbar-title">윤원가정법원</span>
+      <span class="ttl">윤원가정법원</span>
     </div>
-    <div class="topbar-spacer"></div>
-    <button class="nav-btn" onclick="openPopup('popup-egg1')">전자소송</button>
-    <button class="nav-btn" onclick="openPopup('popup-egg2')">판결문 열람</button>
-    <button class="nav-btn" onclick="openPopup('popup-egg3')">이용안내</button>
+    <div class="sp"></div>
+    <button class="nb" onclick="opop('ov-egg1')">전자소송</button>
+    <button class="nb" onclick="opop('ov-verdicts');loadVerdicts()">판결문 열람</button>
+    <button class="nb" onclick="opop('ov-egg3')">이용안내</button>
   </div>
-  <div class="center-wrap">
+  <div class="cw">
     <div style="display:flex;flex-direction:column;align-items:center">
-      <img class="logo-img" src="https://raw.githubusercontent.com/qpwoeiyunwon/itsallyujinsfault/main/courtmark1.png"/>
-      <div class="logo-label">윤원가정법원</div>
+      <img class="li" src="https://raw.githubusercontent.com/qpwoeiyunwon/itsallyujinsfault/main/courtmark1.png"/>
+      <div class="ll">윤원가정법원</div>
     </div>
-    <div class="input-block">
-      <input class="main-input" id="name-input" placeholder="이름을 입력하세요." maxlength="10" onkeydown="if(event.key==='Enter')goLobby()"/>
-      <button class="btn-primary" onclick="goLobby()">입장하기</button>
+    <div class="ib">
+      <input class="mi" id="name-input" placeholder="이름을 입력하세요." maxlength="10" onkeydown="if(event.key==='Enter')goLobby()"/>
+      <button class="bp" onclick="goLobby()">입장하기</button>
     </div>
   </div>
   <div class="footer">유진이의 잘못을 가려라 ㈜ &nbsp;|&nbsp; 유진사랑연합 &nbsp;|&nbsp; yujinlovingcorp ㈜</div>
 </div>
 
-<!-- LOBBY -->
-<div class="screen" id="s-lobby">
+<!-- ══ LOBBY ══ -->
+<div class="pg" id="pg-lobby">
   <div class="topbar">
     <div style="display:flex;align-items:center;gap:8px">
       <img src="https://raw.githubusercontent.com/qpwoeiyunwon/itsallyujinsfault/main/courtmark2.png" style="width:clamp(24px,6vw,34px);height:clamp(24px,6vw,34px);object-fit:contain;"/>
-      <span class="topbar-title">윤원가정법원</span>
+      <span class="ttl">윤원가정법원</span>
     </div>
-    <div class="topbar-spacer"></div>
-    <span class="topbar-user" id="topbar-user"></span>
+    <div class="sp"></div>
+    <span class="usr" id="tu"></span>
   </div>
-  <div class="center-wrap">
+  <div class="cw">
     <div style="display:flex;flex-direction:column;align-items:center">
       <img style="width:clamp(70px,20vw,100px);object-fit:contain;" src="https://raw.githubusercontent.com/qpwoeiyunwon/itsallyujinsfault/main/courtmark1.png"/>
-      <div class="logo-label">전자소송 접수</div>
+      <div class="ll">전자소송 접수</div>
     </div>
-    <div class="input-block">
-      <button class="btn-primary" onclick="goCounter()">📋 초대코드 생성하기</button>
-      <div class="divider">— 또는 —</div>
-      <input class="code-input" id="code-input" placeholder="초대코드 입력 (예: AB1C2D)" maxlength="6" oninput="this.value=this.value.toUpperCase()"/>
-      <button class="btn-primary" onclick="goEnterCode()">입장하기 →</button>
+    <div class="ib">
+      <button class="bp" onclick="goCounter()">📋 초대코드 생성하기</button>
+      <div class="dv">— 또는 —</div>
+      <input class="ci" id="code-input" placeholder="초대코드 입력 (예: AB1C2D)" maxlength="6" oninput="this.value=this.value.toUpperCase()"/>
+      <button class="bp" onclick="goEnterCode()">입장하기 →</button>
     </div>
   </div>
   <div class="footer">유진이의 잘못을 가려라 ㈜ &nbsp;|&nbsp; 유진사랑연합 &nbsp;|&nbsp; yujinlovingcorp ㈜</div>
 </div>
 
-<!-- COUNTER -->
-<div class="screen" id="s-counter">
+<!-- ══ 판사 로비 ══ -->
+<div class="pg" id="pg-judge-lobby">
   <div class="topbar">
     <div style="display:flex;align-items:center;gap:8px">
       <img src="https://raw.githubusercontent.com/qpwoeiyunwon/itsallyujinsfault/main/courtmark2.png" style="width:28px;height:28px;object-fit:contain;"/>
-      <span class="topbar-title">윤원가정법원</span>
+      <span class="ttl">윤원가정법원</span>
     </div>
-    <span style="font-size:var(--font-sm);color:#8B6340;margin-left:8px">&gt; 민원창구</span>
+    <span style="font-size:var(--fsm);color:#c0392b;margin-left:8px">⚠️ 기밀</span>
   </div>
-  <div class="center-wrap">
-    <div style="font-size:var(--font-base);font-weight:700;color:#5a3a1a">📂 소장을 제출해 주세요</div>
+  <div class="cw" style="gap:20px;">
+    <div style="font-size:40px">👨‍⚖️</div>
+    <div style="font-size:var(--fsl);font-weight:900;color:#1a237e;text-align:center;">판사에게 로비하시겠습니까?</div>
+    <div style="font-size:var(--fsm);color:#888;text-align:center;line-height:1.7;">이 내용은 철저히 기밀로 유지됩니다.<br>아무도 모를 거예요... 🤫</div>
+    <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:300px;">
+      <button class="bp" onclick="showJudgePick()" style="background:linear-gradient(135deg,#c0392b,#922b21);">예, 로비하겠습니다 💰</button>
+      <button onclick="goToCounter()" style="background:none;border:1.5px solid #ddd;border-radius:var(--r);padding:var(--bp);font-size:var(--fs);color:#888;cursor:pointer;">아니오, 정정당당하게</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 판사 선택 ══ -->
+<div class="pg" id="pg-judge-pick">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:8px">
+      <img src="https://raw.githubusercontent.com/qpwoeiyunwon/itsallyujinsfault/main/courtmark2.png" style="width:28px;height:28px;object-fit:contain;"/>
+      <span class="ttl">윤원가정법원</span>
+    </div>
+    <span style="font-size:var(--fsm);color:#c0392b;margin-left:8px">⚠️ 기밀</span>
+  </div>
+  <div class="cw" style="gap:20px;">
+    <div style="font-size:var(--fsl);font-weight:900;color:#1a237e;text-align:center;">판사를 선택하세요</div>
+    <div style="font-size:var(--fsm);color:#888;text-align:center;">원하시는 판사를 선택해주세요 😏</div>
+    <div style="display:flex;flex-direction:column;gap:12px;width:100%;max-width:300px;">
+      <button onclick="selectJudge('strict')" style="background:white;border:2px solid #1a237e;border-radius:12px;padding:16px;text-align:left;cursor:pointer;">
+        <div style="font-size:20px;margin-bottom:6px">😤</div>
+        <div style="font-size:var(--fs);font-weight:700;color:#1a237e;">상대방에게 엄격한 판사</div>
+        <div style="font-size:var(--fsm);color:#888;margin-top:4px;">판사 김엄격 — 상대방을 가차없이 몰아붙이는 판사</div>
+      </button>
+      <button onclick="selectJudge('lenient')" style="background:white;border:2px solid #27ae60;border-radius:12px;padding:16px;text-align:left;cursor:pointer;">
+        <div style="font-size:20px;margin-bottom:6px">😊</div>
+        <div style="font-size:var(--fs);font-weight:700;color:#27ae60;">나에게 관대한 판사</div>
+        <div style="font-size:var(--fsm);color:#888;margin-top:4px;">판사 이관대 — 원고의 입장을 깊이 이해하는 판사</div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ COUNTER ══ -->
+<div class="pg" id="pg-counter">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:8px">
+      <img src="https://raw.githubusercontent.com/qpwoeiyunwon/itsallyujinsfault/main/courtmark2.png" style="width:28px;height:28px;object-fit:contain;"/>
+      <span class="ttl">윤원가정법원</span>
+    </div>
+    <span style="font-size:var(--fsm);color:#8B6340;margin-left:8px">&gt; 민원창구</span>
+  </div>
+  <div class="cw">
+    <div style="font-size:var(--fs);font-weight:700;color:#5a3a1a">📂 소장을 제출해 주세요</div>
     <div style="width:100%;max-width:360px">
       <div style="background:linear-gradient(180deg,#e8d8b0,#c8a870);border-radius:16px 16px 0 0;padding:14px 16px 0;border:3px solid #8B6340;border-bottom:none">
-        <div style="font-size:var(--font-sm);font-weight:700;color:#5a3a1a;text-align:center;margin-bottom:10px;letter-spacing:2px">📋 민원 접수 창구 1번</div>
-        <div style="background:rgba(180,220,255,.35);border:3px solid #8B6340;border-radius:8px 8px 0 0;padding:16px;min-height:200px;display:flex;flex-direction:column;align-items:center;gap:10px" id="counter-inner">
-          <div style="font-size:var(--font-sm);color:#5a3a1a;font-weight:700;text-align:center">논쟁 주제를 작성하여 제출하세요</div>
-          <div class="complaint-wrap" style="width:100%;max-width:260px">
-            <div class="complaint-stamp">접수</div>
-            <div class="complaint-title">고 소 장</div>
-            <div class="complaint-label">사건명</div>
-            <div class="complaint-body" id="complaint-preview">...</div>
-            <div class="complaint-footer">윤원가정법원 귀중</div>
+        <div style="font-size:var(--fsm);font-weight:700;color:#5a3a1a;text-align:center;margin-bottom:10px;letter-spacing:2px">📋 민원 접수 창구 1번</div>
+        <div style="background:rgba(180,220,255,.35);border:3px solid #8B6340;border-radius:8px 8px 0 0;padding:16px;min-height:200px;display:flex;flex-direction:column;align-items:center;gap:10px" id="ci">
+          <div style="font-size:var(--fsm);color:#5a3a1a;font-weight:700;text-align:center">논쟁 주제를 작성하여 제출하세요</div>
+          <div class="cpl" style="width:100%;max-width:260px">
+            <div class="cs">접수</div><div class="ct">고 소 장</div>
+            <div style="font-size:10px;color:#555;margin-bottom:5px">사건명</div>
+            <div class="cb" id="cp">...</div>
+            <div class="cf">윤원가정법원 귀중</div>
           </div>
-          <textarea id="topic-textarea" class="full-textarea" style="height:64px;border-color:#c8a060;background:#fffef5" placeholder="예: 남자친구가 게임을 너무 오래 해요..." oninput="document.getElementById('complaint-preview').textContent=this.value||'...'"></textarea>
-          <button class="btn-primary" style="max-width:200px" onclick="submitCounter()">제출하기 📨</button>
+          <textarea id="tt" class="fta" style="height:64px;border-color:#c8a060;background:#fffef5"
+            placeholder="예: 남자친구가 게임을 너무 오래 해요..."
+            oninput="document.getElementById('cp').textContent=this.value||'...'"></textarea>
+          <button class="bp" style="max-width:200px" onclick="submitCounter()">제출하기 📨</button>
         </div>
       </div>
       <div style="background:#8B6340;height:26px;border-radius:0 0 16px 16px;display:flex;align-items:center;justify-content:center">
@@ -473,104 +431,103 @@ textarea,input{font-family:inherit;}
   </div>
 </div>
 
-<!-- CODE RESULT -->
-<div class="screen" id="s-code">
+<!-- ══ CODE ══ -->
+<div class="pg" id="pg-code">
   <div class="topbar">
     <div style="display:flex;align-items:center;gap:8px">
       <img src="https://raw.githubusercontent.com/qpwoeiyunwon/itsallyujinsfault/main/courtmark2.png" style="width:28px;height:28px;object-fit:contain;"/>
-      <span class="topbar-title">윤원가정법원</span>
+      <span class="ttl">윤원가정법원</span>
     </div>
   </div>
-  <div class="center-wrap">
+  <div class="cw">
     <img style="width:clamp(40px,12vw,60px)" src="https://raw.githubusercontent.com/qpwoeiyunwon/itsallyujinsfault/main/courtmark2.png"/>
-    <div style="font-size:var(--font-lg);font-weight:700;color:#1a237e">소장이 접수되었습니다</div>
-    <div style="font-size:var(--font-sm);color:#555;text-align:center">아래 초대코드를 상대방에게 전달하세요.</div>
-    <div class="code-box" id="generated-code">------</div>
-    <div class="case-box">
+    <div style="font-size:var(--fsl);font-weight:700;color:#1a237e">소장이 접수되었습니다</div>
+    <div style="font-size:var(--fsm);color:#555;text-align:center">아래 초대코드를 상대방에게 전달하세요.</div>
+    <div class="cdbox" id="gc">------</div>
+    <div style="background:#fffef5;border:1px solid #c8a060;border-radius:8px;padding:12px 16px;width:100%;max-width:300px;">
       <div style="font-size:10px;color:#888;margin-bottom:4px">접수된 사건명</div>
-      <div style="font-size:var(--font-sm);color:#333" id="code-topic"></div>
+      <div style="font-size:var(--fsm);color:#333" id="ct2"></div>
     </div>
-    <!-- 상대방 입장 대기 표시 -->
-    <div class="wait-card" id="opponent-wait-card">
-      <div style="font-size:var(--font-sm);color:#555;margin-bottom:8px">상대방 입장 대기 중</div>
+    <div class="wc" id="owc">
+      <div style="font-size:var(--fsm);color:#555;margin-bottom:8px">상대방 입장 대기 중</div>
       <div style="display:flex;align-items:center;justify-content:center;gap:8px">
-        <span class="status-dot dot-green"></span><span style="font-size:var(--font-sm);color:#27ae60;font-weight:700" id="plaintiff-status">나 (입장 완료)</span>
+        <span class="dot dg"></span><span style="font-size:var(--fsm);color:#27ae60;font-weight:700" id="ps">나 (입장 완료)</span>
       </div>
       <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px">
-        <span class="status-dot dot-orange"></span><span style="font-size:var(--font-sm);color:#e67e22;font-weight:700" id="defendant-status">상대방 (대기 중...)</span>
+        <span class="dot do"></span><span style="font-size:var(--fsm);color:#e67e22;font-weight:700" id="ds">상대방 (대기 중...)</span>
       </div>
     </div>
   </div>
   <div class="footer">유진이의 잘못을 가려라 ㈜ &nbsp;|&nbsp; 유진사랑연합 &nbsp;|&nbsp; yujinlovingcorp ㈜</div>
 </div>
 
-<!-- BRIEF -->
-<div class="screen" id="s-brief">
+<!-- ══ BRIEF ══ -->
+<div class="pg" id="pg-brief">
   <div class="topbar">
     <div style="display:flex;align-items:center;gap:8px">
       <img src="https://raw.githubusercontent.com/qpwoeiyunwon/itsallyujinsfault/main/courtmark2.png" style="width:28px;height:28px;object-fit:contain;"/>
-      <span class="topbar-title">윤원가정법원</span>
+      <span class="ttl">윤원가정법원</span>
     </div>
-    <span style="font-size:var(--font-sm);color:#8B6340;margin-left:8px">&gt; 변론 준비</span>
-    <div class="topbar-spacer"></div>
-    <span class="topbar-user" id="brief-user"></span>
+    <span style="font-size:var(--fsm);color:#8B6340;margin-left:8px">&gt; 변론 준비</span>
+    <div class="sp"></div>
+    <span class="usr" id="bu"></span>
   </div>
-  <div class="brief-wrap">
-    <div class="lawyer-row">
+  <div class="bfw">
+    <div style="display:flex;align-items:flex-end;gap:clamp(8px,3vw,14px);margin-bottom:14px;">
       <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center">
-        <svg id="lawyer-svg" width="90" height="130" viewBox="0 0 110 160" style="overflow:visible"></svg>
+        <svg id="lsvg" width="90" height="130" viewBox="0 0 110 160" style="overflow:visible"></svg>
         <div style="font-size:9px;color:#555;margin-top:2px">변호사 김정의</div>
       </div>
-      <div class="lawyer-box">
-        <span id="lawyer-text"></span>
-        <button id="lawyer-next-btn" onclick="lawyerNext()" style="display:none;margin-top:10px;padding:6px 16px;background:#1a5fa8;color:white;border:none;border-radius:6px;font-size:12px">다음 ▶</button>
+      <div class="lbx">
+        <span id="lt"></span>
+        <button id="lnb" onclick="lawyerNext()" style="display:none;margin-top:10px;padding:6px 16px;background:#1a5fa8;color:white;border:none;border-radius:6px;font-size:12px">다음 ▶</button>
       </div>
     </div>
-    <div class="input-box" id="statement-box" style="display:none">
-      <div style="font-size:var(--font-sm);font-weight:700;color:#5a3a1a;margin-bottom:8px">📝 내 입장과 상대방 잘못을 작성하세요</div>
-      <textarea id="my-statement" class="full-textarea" style="height:90px" placeholder="저는 ...로서, 상대방이 ...했기 때문에 잘못이라고 생각합니다."></textarea>
-      <button class="btn-primary" style="margin-top:10px" onclick="generateDraft()">AI 변론문 생성 ⚡</button>
+    <div class="ibx" id="sb" style="display:none">
+      <div style="font-size:var(--fsm);font-weight:700;color:#5a3a1a;margin-bottom:8px">📝 내 입장과 상대방 잘못을 작성하세요</div>
+      <textarea id="ms" class="fta" style="height:90px" placeholder="저는 ...로서, 상대방이 ...했기 때문에 잘못이라고 생각합니다."></textarea>
+      <button class="bp" style="margin-top:10px" onclick="generateDraft()">AI 변론문 생성 ⚡</button>
     </div>
-    <div class="edit-box" id="draft-box" style="display:none">
+    <div class="ebx" id="db" style="display:none">
       <div style="font-size:11px;color:#888;margin-bottom:8px">✏️ 초안을 자유롭게 수정하세요</div>
-      <textarea id="final-statement" class="full-textarea" style="height:160px"></textarea>
-      <button class="btn-green" onclick="submitFinal()">⚖️ 변론문 최종 확정 및 제출</button>
+      <textarea id="fs2" class="fta" style="height:160px"></textarea>
+      <button class="bg" onclick="submitFinal()">⚖️ 변론문 최종 확정 및 제출</button>
     </div>
   </div>
 </div>
 
-<!-- WAITING (상대방 변론 대기) -->
-<div class="screen" id="s-wait">
+<!-- ══ WAIT ══ -->
+<div class="pg" id="pg-wait">
   <div class="topbar">
     <div style="display:flex;align-items:center;gap:8px">
       <img src="https://raw.githubusercontent.com/qpwoeiyunwon/itsallyujinsfault/main/courtmark2.png" style="width:28px;height:28px;object-fit:contain;"/>
-      <span class="topbar-title">윤원가정법원</span>
+      <span class="ttl">윤원가정법원</span>
     </div>
   </div>
-  <div class="center-wrap">
+  <div class="cw">
     <img style="width:clamp(40px,12vw,60px)" src="https://raw.githubusercontent.com/qpwoeiyunwon/itsallyujinsfault/main/courtmark2.png"/>
-    <div style="font-size:var(--font-lg);font-weight:700;color:#1a237e">⏳ 재판 대기 중</div>
-    <div class="wait-card">
-      <div style="font-size:var(--font-sm);color:#555;margin-bottom:12px">변론문 제출 현황</div>
-      <div style="display:flex;flex-direction:column;gap:10px">
+    <div style="font-size:var(--fsl);font-weight:700;color:#1a237e">⏳ 재판 대기 중</div>
+    <div class="wc">
+      <div style="font-size:var(--fsm);color:#555;margin-bottom:12px">변론문 제출 현황</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
         <div style="display:flex;align-items:center;justify-content:space-between;background:white;border-radius:8px;padding:10px 14px">
-          <span style="font-size:var(--font-sm);font-weight:700" id="wait-p-name">원고</span>
-          <span id="wait-p-status" style="font-size:12px">⏳ 대기</span>
+          <span style="font-size:var(--fsm);font-weight:700" id="wpn">원고</span>
+          <span id="wps" style="font-size:12px">⏳ 대기</span>
         </div>
         <div style="display:flex;align-items:center;justify-content:space-between;background:white;border-radius:8px;padding:10px 14px">
-          <span style="font-size:var(--font-sm);font-weight:700" id="wait-d-name">피고</span>
-          <span id="wait-d-status" style="font-size:12px">⏳ 대기</span>
+          <span style="font-size:var(--fsm);font-weight:700" id="wdn">피고</span>
+          <span id="wds" style="font-size:12px">⏳ 대기</span>
         </div>
       </div>
-      <div style="margin-top:12px;font-size:var(--font-sm);color:#1a5fa8;font-weight:700" id="wait-msg">상대방 변론문 제출을 기다리는 중...</div>
+      <div style="margin-top:12px;font-size:var(--fsm);color:#1a5fa8;font-weight:700" id="wm">상대방 변론문 제출을 기다리는 중...</div>
     </div>
   </div>
 </div>
 
-<!-- TRIAL -->
-<div class="screen" id="trial-screen" style="position:fixed;inset:0;overflow:hidden;display:none">
+<!-- ══ TRIAL ══ -->
+<div class="pg" id="pg-trial" style="position:fixed;inset:0;overflow:hidden;">
   <div style="position:relative;width:100%;height:100%">
-    <div class="court-svg-wrap">
+    <div class="cvw">
       <svg viewBox="0 0 800 520" preserveAspectRatio="xMidYMid slice">
         <rect width="800" height="520" fill="#c8b89a"/>
         <rect width="800" height="340" fill="#e8dcc8"/>
@@ -612,711 +569,552 @@ textarea,input{font-family:inherit;}
         <rect x="596" y="272" width="148" height="12" rx="4" fill="#7a5030"/>
         <line x1="0" y1="338" x2="800" y2="338" stroke="#6B4423" stroke-width="4"/>
         <defs>
-          <radialGradient id="spotL" cx="25%" cy="0%" r="50%"><stop offset="0%" stop-color="rgba(255,240,200,0.35)"/><stop offset="100%" stop-color="rgba(255,240,200,0)"/></radialGradient>
-          <radialGradient id="spotR" cx="75%" cy="0%" r="50%"><stop offset="0%" stop-color="rgba(255,240,200,0.35)"/><stop offset="100%" stop-color="rgba(255,240,200,0)"/></radialGradient>
+          <radialGradient id="sl" cx="25%" cy="0%" r="50%"><stop offset="0%" stop-color="rgba(255,240,200,0.35)"/><stop offset="100%" stop-color="rgba(255,240,200,0)"/></radialGradient>
+          <radialGradient id="sr" cx="75%" cy="0%" r="50%"><stop offset="0%" stop-color="rgba(255,240,200,0.35)"/><stop offset="100%" stop-color="rgba(255,240,200,0)"/></radialGradient>
         </defs>
-        <rect width="800" height="340" fill="url(#spotL)"/>
-        <rect width="800" height="340" fill="url(#spotR)"/>
+        <rect width="800" height="340" fill="url(#sl)"/>
+        <rect width="800" height="340" fill="url(#sr)"/>
       </svg>
     </div>
-    <div class="trial-overlay" id="gavel-overlay">
-      <div id="gavel-icon" class="gavel-big">🔨</div>
-      <div class="open-text">개 정 합 니 다</div>
-    </div>
-    <div class="case-banner" id="case-banner" style="display:none"></div>
-    <div class="chars-layer" id="chars-layer" style="display:none">
-      <div class="char-slot" id="slot-p" style="opacity:.45">
-        <div id="bubble-p" style="display:none">
-          <div class="bubble" style="border:2.5px solid #1a5fa8">
-            <span id="bubble-p-text"></span>
-            <div class="bubble-tail-left" style="border-top:10px solid #1a5fa8"></div>
-          </div>
+    <div class="tov" id="gov"><div id="gi" class="gb">🔨</div><div class="ot">개 정 합 니 다</div></div>
+    <div class="cbn" id="cbn" style="display:none"></div>
+    <div class="cl" id="chl" style="display:none">
+      <div class="cs2" id="sp2" style="opacity:.45">
+        <div id="bp2" style="display:none">
+          <div class="bub" style="border:2.5px solid #1a5fa8"><span id="bpt"></span><div class="btl" style="border-top:10px solid #1a5fa8"></div></div>
         </div>
-        <svg id="svg-p" viewBox="0 0 110 160" style="overflow:visible;width:clamp(60px,16vw,100px)"></svg>
-        <div class="char-label" style="background:rgba(26,95,168,.88);color:white" id="label-p">원고 측 변호인</div>
+        <svg id="svp" viewBox="0 0 110 160" style="overflow:visible;width:clamp(60px,16vw,100px)"></svg>
+        <div class="clb" style="background:rgba(26,95,168,.88);color:white" id="lbp">원고 측 변호인</div>
       </div>
-      <div class="char-slot" id="slot-j" style="opacity:.7;position:absolute;left:50%;transform:translateX(-50%);bottom:clamp(36%,40vw,42%)">
-        <svg id="svg-j" viewBox="0 0 120 170" style="overflow:visible;width:clamp(65px,17vw,110px)"></svg>
-        <div class="char-label" style="background:rgba(26,35,126,.9);color:#FFD700">판사 이공정</div>
+      <div class="cs2" id="sj2" style="opacity:.7;position:absolute;left:50%;transform:translateX(-50%);bottom:clamp(36%,40vw,42%)">
+        <svg id="svj" viewBox="0 0 120 170" style="overflow:visible;width:clamp(65px,17vw,110px)"></svg>
+        <div class="clb" style="background:rgba(26,35,126,.9);color:#FFD700">판사 이공정</div>
       </div>
-      <div class="judge-bubble-wrap" id="judge-bubble-wrap" style="display:none">
-        <div class="judge-bubble">🤔 판결을 내리는 중...</div>
-      </div>
-      <div class="char-slot" id="slot-d" style="opacity:.45">
-        <div id="bubble-d" style="display:none">
-          <div class="bubble" style="border:2.5px solid #c0392b">
-            <span id="bubble-d-text"></span>
-            <div class="bubble-tail-right" style="border-top:10px solid #c0392b"></div>
-          </div>
+      <div class="jbw" id="jbw" style="display:none"><div class="jbb">🤔 판결을 내리는 중...</div></div>
+      <div class="cs2" id="sd2" style="opacity:.45">
+        <div id="bd2" style="display:none">
+          <div class="bub" style="border:2.5px solid #c0392b"><span id="bdt"></span><div class="btr" style="border-top:10px solid #c0392b"></div></div>
         </div>
-        <svg id="svg-d" viewBox="0 0 110 160" style="overflow:visible;width:clamp(60px,16vw,100px);transform:scaleX(-1)"></svg>
-        <div class="char-label" style="background:rgba(192,57,43,.88);color:white" id="label-d">피고 측 변호인</div>
+        <svg id="svd" viewBox="0 0 110 160" style="overflow:visible;width:clamp(60px,16vw,100px);transform:scaleX(-1)"></svg>
+        <div class="clb" style="background:rgba(192,57,43,.88);color:white" id="lbd">피고 측 변호인</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- VERDICT -->
-<div id="verdict-screen">
-  <div id="verdict-gavel" style="text-align:center">
-    <div id="verdict-gavel-icon" style="font-size:clamp(70px,20vw,110px);filter:drop-shadow(0 4px 24px rgba(255,200,0,.8));transition:font-size .2s">🔨</div>
+<!-- ══ VERDICT ══ -->
+<div id="pg-verdict">
+  <div id="vg" style="text-align:center">
+    <div id="vgi" style="font-size:clamp(70px,20vw,110px);filter:drop-shadow(0 4px 24px rgba(255,200,0,.8));transition:font-size .2s">🔨</div>
     <div style="color:#FFD700;font-size:clamp(18px,5vw,24px);font-weight:900;margin-top:16px;letter-spacing:clamp(4px,2vw,6px)">판 결 !</div>
   </div>
-  <div class="verdict-inner" id="verdict-content" style="display:none">
+  <div class="vi" id="vc" style="display:none">
     <div style="text-align:center">
       <img style="width:clamp(36px,10vw,48px)" src="https://raw.githubusercontent.com/qpwoeiyunwon/itsallyujinsfault/main/courtmark2.png"/>
       <div style="color:#FFD700;font-size:clamp(16px,5vw,22px);font-weight:900;margin-top:8px;letter-spacing:2px">최 종 판 결 문</div>
-      <div style="color:#aaa;font-size:var(--font-sm);margin-top:4px" id="verdict-topic"></div>
+      <div style="color:#aaa;font-size:var(--fsm);margin-top:4px" id="vtpc"></div>
     </div>
-    <div class="bar-wrap">
+    <div style="background:rgba(255,255,255,.05);border-radius:12px;padding:clamp(12px,4vw,16px);border:1px solid rgba(255,215,0,.3);">
       <div style="color:#FFD700;font-size:11px;font-weight:700;text-align:center;margin-bottom:8px;letter-spacing:1px">⚖️ 잘못한 비율</div>
       <div style="display:flex;justify-content:space-between;margin-bottom:6px">
-        <div style="text-align:center"><div style="color:#74b9ff;font-size:var(--font-sm);font-weight:700" id="verdict-p-name">원고</div><div style="color:#74b9ff;font-size:clamp(18px,5vw,22px);font-weight:700" id="pct-p">--%</div></div>
-        <div style="text-align:center"><div style="color:#ff7675;font-size:var(--font-sm);font-weight:700" id="verdict-d-name">피고</div><div style="color:#ff7675;font-size:clamp(18px,5vw,22px);font-weight:700" id="pct-d">--%</div></div>
+        <div style="text-align:center"><div style="color:#74b9ff;font-size:var(--fsm);font-weight:700" id="vpn">원고</div><div style="color:#74b9ff;font-size:clamp(18px,5vw,22px);font-weight:700" id="pp">--%</div></div>
+        <div style="text-align:center"><div style="color:#ff7675;font-size:var(--fsm);font-weight:700" id="vdn">피고</div><div style="color:#ff7675;font-size:clamp(18px,5vw,22px);font-weight:700" id="dp">--%</div></div>
       </div>
-      <div class="fault-bar"><div class="fault-p" id="bar-p"><span class="fault-label" id="bar-p-label"></span></div><div class="fault-d" id="bar-d"><span class="fault-label" id="bar-d-label"></span></div></div>
-      <div style="text-align:center;margin-top:10px;color:#FFD700;font-size:var(--font-base);font-weight:700" id="verdict-winner"></div>
+      <div class="fb"><div class="fp" id="bp3"><span class="fl" id="bpl"></span></div><div class="fd" id="bd3"><span class="fl" id="bdl"></span></div></div>
+      <div style="text-align:center;margin-top:10px;color:#FFD700;font-size:var(--fs);font-weight:700" id="vw"></div>
     </div>
-    <div class="verdict-section">
-      <div style="color:#FFD700;font-size:var(--font-sm);font-weight:700;margin-bottom:8px">📋 판결 이유</div>
-      <div style="color:white;font-size:var(--font-sm);line-height:1.8" id="verdict-reason"></div>
+    <div style="background:rgba(255,255,255,.05);border-radius:12px;padding:clamp(12px,4vw,16px);border:1px solid rgba(255,215,0,.2);">
+      <div style="color:#FFD700;font-size:var(--fsm);font-weight:700;margin-bottom:8px">📋 판결 이유</div>
+      <div style="color:white;font-size:var(--fsm);line-height:1.8" id="vr"></div>
     </div>
-    <div class="verdict-order">
-      <div style="color:#FFD700;font-size:var(--font-sm);font-weight:700;margin-bottom:8px">🩷 판사의 화해 명령</div>
-      <div style="color:white;font-size:var(--font-base);line-height:1.8;font-weight:700" id="verdict-order-text"></div>
+    <div style="background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(255,215,0,.05));border-radius:12px;padding:clamp(12px,4vw,16px);border:2px solid #FFD700;text-align:center;">
+      <div style="color:#FFD700;font-size:var(--fsm);font-weight:700;margin-bottom:8px">🩷 판사의 화해 명령</div>
+      <div style="color:white;font-size:var(--fs);line-height:1.8;font-weight:700" id="vo"></div>
     </div>
     <div style="display:flex;justify-content:center;padding:8px 0">
       <div style="text-align:center">
-        <svg id="judge-verdict-svg" viewBox="0 0 120 170" style="overflow:visible;width:clamp(70px,18vw,100px)"></svg>
+        <svg id="jvs" viewBox="0 0 120 170" style="overflow:visible;width:clamp(70px,18vw,100px)"></svg>
         <div style="color:#aaa;font-size:10px;margin-top:2px">판사 이공정</div>
       </div>
     </div>
-    <button class="btn-gold" onclick="resetApp()">처음으로 돌아가기 🏠</button>
+    <button class="bgo" onclick="resetApp()">처음으로 돌아가기 🏠</button>
   </div>
 </div>
 
 <script>
-// ── 상태 ──
+// ══ 상태 ══
 const S={
-  userName:'', topic:'', role:'원고',
-  roomCode:'', plaintiffName:'', defendantName:'',
-  plaintiffStatement:'', defendantStatement:'',
-  plaintiffArg:'', defendantArg:'',
-  isYujin:false, bribedJudge:false
+  userName:'',topic:'',role:'원고',
+  roomCode:'',plaintiffName:'',defendantName:'',
+  plaintiffStatement:'',defendantStatement:'',
+  plaintiffArg:'',defendantArg:'',
+  isYujin:false,bribedJudge:false
 };
-let trialTimers=[], roomListener=null, waitInterval=null;
+let tTimers=[],roomListener=null,waitInterval=null;
 
-// ── Firebase 준비 대기 ──
-function waitFirebase(cb){
-  if(window.firebaseReady) cb();
-  else window.addEventListener('firebaseReady', cb, {once:true});
-}
-
-// ── 화면 전환 ──
+// ══ 화면 전환 ══
+const PAGES=['pg-intro','pg-lobby','pg-judge-lobby','pg-judge-pick','pg-counter','pg-code','pg-brief','pg-wait'];
 function show(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  const el=document.getElementById(id);
-  if(el) el.classList.add('active');
-  document.getElementById('trial-screen').style.display='none';
-  document.getElementById('verdict-screen').style.display='none';
-  document.getElementById('verdict-screen').classList.remove('active');
-}
-function showTrial(){document.getElementById('trial-screen').style.display='flex';}
-function showVerdict(){
-  document.getElementById('trial-screen').style.display='none';
-  const v=document.getElementById('verdict-screen');
-  v.style.display='flex'; v.classList.add('active');
-}
-
-// ── 팝업 ──
-function openPopup(id){
-  document.getElementById(id).classList.add('active');
-  if(id==='popup-egg2') loadVerdicts();
-}
-function closePopup(id){document.getElementById(id).classList.remove('active');}
-
-// ── API ──
-async function callClaude(messages, system){
-  const res=await fetch('/.netlify/functions/claude',{
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({messages, system})
+  PAGES.forEach(pid=>{
+    const el=document.getElementById(pid);
+    if(el) el.style.display='none';
   });
+  document.getElementById('pg-trial').style.display='none';
+  document.getElementById('pg-verdict').style.display='none';
+  const t=document.getElementById(id);
+  if(t) t.style.display='flex';
+}
+
+// ══ 팝업 ══
+function opop(id){
+  document.getElementById(id).classList.add('on');
+  if(id==='ov-verdicts') loadVerdicts();
+}
+function cpop(id){document.getElementById(id).classList.remove('on');}
+
+// ══ Firebase ══
+function wfb(cb){if(window.firebaseReady)cb();else window.addEventListener('firebaseReady',cb,{once:true});}
+
+// ══ API ══
+async function callClaude(messages,system){
+  const res=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages,system})});
   const data=await res.json();
   return data.content?.[0]?.text||'';
 }
 
-// ── 음성 ──
-function playBleep(pitch=1){
+// ══ 음성 ══
+function bleep(pitch=1){
   try{
     const ctx=new(window.AudioContext||window.webkitAudioContext)();
-    const osc=ctx.createOscillator(), gain=ctx.createGain();
-    osc.connect(gain); gain.connect(ctx.destination);
-    osc.frequency.value=(280+Math.random()*220)*pitch;
-    osc.type='sine';
-    gain.gain.setValueAtTime(0.12, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+0.07);
-    osc.start(); osc.stop(ctx.currentTime+0.07);
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.frequency.value=(280+Math.random()*220)*pitch;o.type='sine';
+    g.gain.setValueAtTime(0.12,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.07);
+    o.start();o.stop(ctx.currentTime+0.07);
   }catch(e){}
 }
 
-// ── 타이핑 ──
-function typeText(el, text, speed=38, onDone, pitch=1){
-  let i=0; el.textContent='';
+// ══ 타이핑 ══
+function typeText(el,text,speed=38,onDone,pitch=1){
+  let i=0;el.textContent='';
   const t=setInterval(()=>{
-    if(i<text.length){el.textContent=text.slice(0,i+1); if(i%2===0)playBleep(pitch); i++;}
-    else{clearInterval(t); if(onDone)onDone();}
-  }, speed);
-  trialTimers.push(t);
-  return t;
+    if(i<text.length){el.textContent=text.slice(0,i+1);if(i%2===0)bleep(pitch);i++;}
+    else{clearInterval(t);if(onDone)onDone();}
+  },speed);
+  tTimers.push(t);return t;
 }
 
-// ── SVG ──
-function lawyerSVGHtml(talking, armUp){
-  const mouth=talking?`<path d="M44 52 Q55 60 66 52 Q60 56 55 57 Q50 56 44 52 Z" fill="#c0392b" stroke="#922b21" stroke-width="1"/>`:`<path d="M45 52 Q55 57 65 52" stroke="#c0392b" stroke-width="2" fill="none" stroke-linecap="round"/>`;
-  const arm=armUp?`<line x1="22" y1="80" x2="2" y2="58" stroke="#1e3a6e" stroke-width="13" stroke-linecap="round"/><line x1="2" y1="58" x2="-10" y2="50" stroke="#F5C5A3" stroke-width="11" stroke-linecap="round"/><circle cx="-14" cy="47" r="5" fill="#F5C5A3"/><line x1="-14" y1="42" x2="-20" y2="35" stroke="#F5C5A3" stroke-width="4" stroke-linecap="round"/>` : `<line x1="22" y1="80" x2="10" y2="112" stroke="#1e3a6e" stroke-width="13" stroke-linecap="round"/><ellipse cx="10" cy="116" rx="7" ry="6" fill="#F5C5A3"/>`;
-  return `<rect x="36" y="118" width="16" height="36" rx="5" fill="#1a1a40"/><rect x="58" y="118" width="16" height="36" rx="5" fill="#1a1a40"/><ellipse cx="44" cy="154" rx="12" ry="6" fill="#2c1a0a"/><ellipse cx="66" cy="154" rx="12" ry="6" fill="#2c1a0a"/><path d="M22 72 Q20 90 22 125 L88 125 Q90 90 88 72 Z" fill="#1e3a6e"/><path d="M44 72 L55 88 L66 72 L58 68 L55 80 L52 68 Z" fill="#162d55"/><rect x="48" y="70" width="14" height="28" rx="2" fill="white"/><polygon points="55,74 52,86 55,92 58,86" fill="#c0392b"/><polygon points="55,88 53,95 55,98 57,95" fill="#922b21"/>${arm}<line x1="88" y1="80" x2="98" y2="112" stroke="#1e3a6e" stroke-width="13" stroke-linecap="round"/><ellipse cx="98" cy="116" rx="7" ry="6" fill="#F5C5A3"/><rect x="49" y="56" width="12" height="16" rx="4" fill="#F5C5A3"/><ellipse cx="55" cy="38" rx="26" ry="28" fill="#F5C5A3"/><ellipse cx="29" cy="38" rx="5" ry="7" fill="#F5C5A3"/><ellipse cx="81" cy="38" rx="5" ry="7" fill="#F5C5A3"/><path d="M38 26 Q44 22 50 25" stroke="#1a0a00" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M60 25 Q66 22 72 26" stroke="#1a0a00" stroke-width="2.5" fill="none" stroke-linecap="round"/><ellipse cx="44" cy="33" rx="7" ry="8" fill="white"/><ellipse cx="66" cy="33" rx="7" ry="8" fill="white"/><circle cx="44" cy="34" r="5" fill="#1a0a00"/><circle cx="66" cy="34" r="5" fill="#1a0a00"/><circle cx="42" cy="32" r="1.5" fill="white"/><circle cx="64" cy="32" r="1.5" fill="white"/><path d="M53 42 Q55 46 57 42" stroke="#c8956a" stroke-width="1.5" fill="none"/>${mouth}<path d="M30 22 Q35 5 55 8 Q75 5 80 22 Q72 10 55 12 Q38 10 30 22 Z" fill="#0a0a0a"/><path d="M55 8 Q58 -2 62 4" fill="#0a0a0a"/><path d="M48 9 Q44 -1 50 2" fill="#0a0a0a"/><path d="M62 10 Q68 0 70 6" fill="#0a0a0a"/>`;
+// ══ SVG ══
+function lsvg(tk,au){
+  const m=tk?`<path d="M44 52 Q55 60 66 52 Q60 56 55 57 Q50 56 44 52 Z" fill="#c0392b" stroke="#922b21" stroke-width="1"/>`:`<path d="M45 52 Q55 57 65 52" stroke="#c0392b" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+  const a=au?`<line x1="22" y1="80" x2="2" y2="58" stroke="#1e3a6e" stroke-width="13" stroke-linecap="round"/><line x1="2" y1="58" x2="-10" y2="50" stroke="#F5C5A3" stroke-width="11" stroke-linecap="round"/><circle cx="-14" cy="47" r="5" fill="#F5C5A3"/><line x1="-14" y1="42" x2="-20" y2="35" stroke="#F5C5A3" stroke-width="4" stroke-linecap="round"/>` : `<line x1="22" y1="80" x2="10" y2="112" stroke="#1e3a6e" stroke-width="13" stroke-linecap="round"/><ellipse cx="10" cy="116" rx="7" ry="6" fill="#F5C5A3"/>`;
+  return `<rect x="36" y="118" width="16" height="36" rx="5" fill="#1a1a40"/><rect x="58" y="118" width="16" height="36" rx="5" fill="#1a1a40"/><ellipse cx="44" cy="154" rx="12" ry="6" fill="#2c1a0a"/><ellipse cx="66" cy="154" rx="12" ry="6" fill="#2c1a0a"/><path d="M22 72 Q20 90 22 125 L88 125 Q90 90 88 72 Z" fill="#1e3a6e"/><path d="M44 72 L55 88 L66 72 L58 68 L55 80 L52 68 Z" fill="#162d55"/><rect x="48" y="70" width="14" height="28" rx="2" fill="white"/><polygon points="55,74 52,86 55,92 58,86" fill="#c0392b"/><polygon points="55,88 53,95 55,98 57,95" fill="#922b21"/>${a}<line x1="88" y1="80" x2="98" y2="112" stroke="#1e3a6e" stroke-width="13" stroke-linecap="round"/><ellipse cx="98" cy="116" rx="7" ry="6" fill="#F5C5A3"/><rect x="49" y="56" width="12" height="16" rx="4" fill="#F5C5A3"/><ellipse cx="55" cy="38" rx="26" ry="28" fill="#F5C5A3"/><ellipse cx="29" cy="38" rx="5" ry="7" fill="#F5C5A3"/><ellipse cx="81" cy="38" rx="5" ry="7" fill="#F5C5A3"/><path d="M38 26 Q44 22 50 25" stroke="#1a0a00" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M60 25 Q66 22 72 26" stroke="#1a0a00" stroke-width="2.5" fill="none" stroke-linecap="round"/><ellipse cx="44" cy="33" rx="7" ry="8" fill="white"/><ellipse cx="66" cy="33" rx="7" ry="8" fill="white"/><circle cx="44" cy="34" r="5" fill="#1a0a00"/><circle cx="66" cy="34" r="5" fill="#1a0a00"/><circle cx="42" cy="32" r="1.5" fill="white"/><circle cx="64" cy="32" r="1.5" fill="white"/><path d="M53 42 Q55 46 57 42" stroke="#c8956a" stroke-width="1.5" fill="none"/>${m}<path d="M30 22 Q35 5 55 8 Q75 5 80 22 Q72 10 55 12 Q38 10 30 22 Z" fill="#0a0a0a"/><path d="M55 8 Q58 -2 62 4" fill="#0a0a0a"/><path d="M48 9 Q44 -1 50 2" fill="#0a0a0a"/><path d="M62 10 Q68 0 70 6" fill="#0a0a0a"/>`;
 }
-function judgeSVGHtml(talking, armUp){
-  const mouth=talking?`<path d="M47 57 Q60 65 73 57 Q66 62 60 63 Q54 62 47 57 Z" fill="#c0392b" stroke="#922b21" stroke-width="1"/>`:`<path d="M49 57 Q60 62 71 57" stroke="#8B4513" stroke-width="2" fill="none" stroke-linecap="round"/>`;
-  const arm=armUp?`<line x1="102" y1="85" x2="112" y2="62" stroke="#0d1b3e" stroke-width="14" stroke-linecap="round"/><line x1="112" y1="62" x2="116" y2="50" stroke="#F5C5A3" stroke-width="11" stroke-linecap="round"/><rect x="108" y="28" width="8" height="28" rx="3" fill="#8B6340"/><rect x="103" y="24" width="18" height="10" rx="4" fill="#c8a060"/><rect x="103" y="52" width="18" height="8" rx="4" fill="#c8a060"/>` : `<line x1="102" y1="85" x2="112" y2="118" stroke="#0d1b3e" stroke-width="14" stroke-linecap="round"/><ellipse cx="112" cy="122" rx="8" ry="6" fill="#F5C5A3"/><rect x="96" y="80" width="7" height="28" rx="3" fill="#8B6340" transform="rotate(15 100 94)"/><rect x="91" y="76" width="16" height="9" rx="4" fill="#c8a060" transform="rotate(15 99 80)"/>`;
-  return `<rect x="40" y="128" width="17" height="38" rx="5" fill="#0d1b3e"/><rect x="63" y="128" width="17" height="38" rx="5" fill="#0d1b3e"/><ellipse cx="48" cy="166" rx="13" ry="6" fill="#1a0a00"/><ellipse cx="71" cy="166" rx="13" ry="6" fill="#1a0a00"/><path d="M18 78 Q16 100 18 134 L102 134 Q104 100 102 78 Z" fill="#0d1b3e"/><path d="M18 78 L28 134" stroke="#1a2f6e" stroke-width="3"/><path d="M102 78 L92 134" stroke="#1a2f6e" stroke-width="3"/><path d="M44 78 L60 98 L76 78 L68 72 L60 85 L52 72 Z" fill="white"/><line x1="53" y1="74" x2="52" y2="86" stroke="#ddd" stroke-width="1.5"/><line x1="67" y1="74" x2="68" y2="86" stroke="#ddd" stroke-width="1.5"/>${arm}<line x1="18" y1="85" x2="8" y2="118" stroke="#0d1b3e" stroke-width="14" stroke-linecap="round"/><ellipse cx="8" cy="122" rx="8" ry="6" fill="#F5C5A3"/><rect x="52" y="62" width="16" height="18" rx="5" fill="#F5C5A3"/><ellipse cx="60" cy="42" rx="28" ry="30" fill="#F5C5A3"/><ellipse cx="32" cy="42" rx="5" ry="7" fill="#F5C5A3"/><ellipse cx="88" cy="42" rx="5" ry="7" fill="#F5C5A3"/><path d="M32 30 Q34 5 60 5 Q86 5 88 30 Q80 14 60 14 Q40 14 32 30 Z" fill="#e8e8e8"/><path d="M33 30 Q28 42 30 55 Q34 38 34 30 Z" fill="#e8e8e8"/><path d="M87 30 Q92 42 90 55 Q86 38 86 30 Z" fill="#e8e8e8"/><ellipse cx="38" cy="8" rx="5" ry="6" fill="#ddd" stroke="#ccc" stroke-width="1"/><ellipse cx="49" cy="8" rx="5" ry="6" fill="#ddd" stroke="#ccc" stroke-width="1"/><ellipse cx="60" cy="6" rx="6" ry="7" fill="#ddd" stroke="#ccc" stroke-width="1"/><ellipse cx="71" cy="8" rx="5" ry="6" fill="#ddd" stroke="#ccc" stroke-width="1"/><path d="M44 30 Q50 27 56 30" stroke="#5a3a00" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M64 30 Q70 27 76 30" stroke="#5a3a00" stroke-width="2" fill="none" stroke-linecap="round"/><ellipse cx="50" cy="38" rx="7" ry="7.5" fill="white"/><ellipse cx="70" cy="38" rx="7" ry="7.5" fill="white"/><circle cx="50" cy="39" r="4.5" fill="#2c1a00"/><circle cx="70" cy="39" r="4.5" fill="#2c1a00"/><circle cx="48" cy="37" r="1.5" fill="white"/><circle cx="68" cy="37" r="1.5" fill="white"/><path d="M57 48 Q60 53 63 48" stroke="#c8956a" stroke-width="1.5" fill="none"/>${mouth}`;
+function jsvg(tk,au){
+  const m=tk?`<path d="M47 57 Q60 65 73 57 Q66 62 60 63 Q54 62 47 57 Z" fill="#c0392b" stroke="#922b21" stroke-width="1"/>`:`<path d="M49 57 Q60 62 71 57" stroke="#8B4513" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+  const a=au?`<line x1="102" y1="85" x2="112" y2="62" stroke="#0d1b3e" stroke-width="14" stroke-linecap="round"/><line x1="112" y1="62" x2="116" y2="50" stroke="#F5C5A3" stroke-width="11" stroke-linecap="round"/><rect x="108" y="28" width="8" height="28" rx="3" fill="#8B6340"/><rect x="103" y="24" width="18" height="10" rx="4" fill="#c8a060"/><rect x="103" y="52" width="18" height="8" rx="4" fill="#c8a060"/>` : `<line x1="102" y1="85" x2="112" y2="118" stroke="#0d1b3e" stroke-width="14" stroke-linecap="round"/><ellipse cx="112" cy="122" rx="8" ry="6" fill="#F5C5A3"/><rect x="96" y="80" width="7" height="28" rx="3" fill="#8B6340" transform="rotate(15 100 94)"/><rect x="91" y="76" width="16" height="9" rx="4" fill="#c8a060" transform="rotate(15 99 80)"/>`;
+  return `<rect x="40" y="128" width="17" height="38" rx="5" fill="#0d1b3e"/><rect x="63" y="128" width="17" height="38" rx="5" fill="#0d1b3e"/><ellipse cx="48" cy="166" rx="13" ry="6" fill="#1a0a00"/><ellipse cx="71" cy="166" rx="13" ry="6" fill="#1a0a00"/><path d="M18 78 Q16 100 18 134 L102 134 Q104 100 102 78 Z" fill="#0d1b3e"/><path d="M18 78 L28 134" stroke="#1a2f6e" stroke-width="3"/><path d="M102 78 L92 134" stroke="#1a2f6e" stroke-width="3"/><path d="M44 78 L60 98 L76 78 L68 72 L60 85 L52 72 Z" fill="white"/><line x1="53" y1="74" x2="52" y2="86" stroke="#ddd" stroke-width="1.5"/><line x1="67" y1="74" x2="68" y2="86" stroke="#ddd" stroke-width="1.5"/>${a}<line x1="18" y1="85" x2="8" y2="118" stroke="#0d1b3e" stroke-width="14" stroke-linecap="round"/><ellipse cx="8" cy="122" rx="8" ry="6" fill="#F5C5A3"/><rect x="52" y="62" width="16" height="18" rx="5" fill="#F5C5A3"/><ellipse cx="60" cy="42" rx="28" ry="30" fill="#F5C5A3"/><ellipse cx="32" cy="42" rx="5" ry="7" fill="#F5C5A3"/><ellipse cx="88" cy="42" rx="5" ry="7" fill="#F5C5A3"/><path d="M32 30 Q34 5 60 5 Q86 5 88 30 Q80 14 60 14 Q40 14 32 30 Z" fill="#e8e8e8"/><path d="M33 30 Q28 42 30 55 Q34 38 34 30 Z" fill="#e8e8e8"/><path d="M87 30 Q92 42 90 55 Q86 38 86 30 Z" fill="#e8e8e8"/><ellipse cx="38" cy="8" rx="5" ry="6" fill="#ddd" stroke="#ccc" stroke-width="1"/><ellipse cx="49" cy="8" rx="5" ry="6" fill="#ddd" stroke="#ccc" stroke-width="1"/><ellipse cx="60" cy="6" rx="6" ry="7" fill="#ddd" stroke="#ccc" stroke-width="1"/><ellipse cx="71" cy="8" rx="5" ry="6" fill="#ddd" stroke="#ccc" stroke-width="1"/><path d="M44 30 Q50 27 56 30" stroke="#5a3a00" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M64 30 Q70 27 76 30" stroke="#5a3a00" stroke-width="2" fill="none" stroke-linecap="round"/><ellipse cx="50" cy="38" rx="7" ry="7.5" fill="white"/><ellipse cx="70" cy="38" rx="7" ry="7.5" fill="white"/><circle cx="50" cy="39" r="4.5" fill="#2c1a00"/><circle cx="70" cy="39" r="4.5" fill="#2c1a00"/><circle cx="48" cy="37" r="1.5" fill="white"/><circle cx="68" cy="37" r="1.5" fill="white"/><path d="M57 48 Q60 53 63 48" stroke="#c8956a" stroke-width="1.5" fill="none"/>${m}`;
 }
-function renderLawyer(id,t,a){document.getElementById(id).innerHTML=lawyerSVGHtml(t,a);}
-function renderJudge(id,t,a){document.getElementById(id).innerHTML=judgeSVGHtml(t,a);}
+function rl(id,t,a){document.getElementById(id).innerHTML=lsvg(t,a);}
+function rj(id,t,a){document.getElementById(id).innerHTML=jsvg(t,a);}
 function genCode(){return Math.random().toString(36).substring(2,8).toUpperCase();}
 
-// ════════════════════════════════
-// STEP1: 인트로
-// ════════════════════════════════
+// ══ INTRO ══
 function goLobby(){
   const n=document.getElementById('name-input').value.trim();
   if(!n)return;
-  // 유진 이스터에그
   if(n==='정유진'||n==='유진'){
-    document.getElementById('yujin-name-display').textContent=n;
-    openPopup('popup-yujin');
+    document.getElementById('yujin-nm').textContent=n;
+    opop('ov-yujin');
     return;
   }
-  S.userName=n;
-  document.getElementById('topbar-user').textContent='👤 '+n+'님';
-  show('s-lobby');
+  S.userName=n;S.isYujin=false;
+  document.getElementById('tu').textContent='👤 '+n+'님';
+  show('pg-lobby');
 }
-
-function confirmYujinEntry(){
-  closePopup('popup-yujin');
+function confirmYujin(){
+  cpop('ov-yujin');
   const n=document.getElementById('name-input').value.trim();
-  S.userName=n;
-  S.isYujin=true; // 유진 플래그
-  document.getElementById('topbar-user').textContent='👤 '+n+'님';
-  show('s-lobby');
+  S.userName=n;S.isYujin=true;
+  document.getElementById('tu').textContent='👤 '+n+'님';
+  show('pg-lobby');
 }
 
-// ════════════════════════════════
-// STEP2: 로비 — 원고 (방 생성)
-// ════════════════════════════════
-function goCounter(){S.role='원고'; show('s-counter');}
-
-// ════════════════════════════════
-// STEP3: 소장 작성 & Firebase 방 생성
-// ════════════════════════════════
-function submitCounter(){
-  const t=document.getElementById('topic-textarea').value.trim();
-  if(!t)return;
-  S.topic=t;
-  S.roomCode=genCode();
-  // 접수 애니메이션
-  const inner=document.getElementById('counter-inner');
-  inner.innerHTML=`
-    <div style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:10px 0;min-height:200px;justify-content:center;overflow:hidden">
-      <div id="flying-complaint" style="transition:all 1s cubic-bezier(0.4,0,0.2,1)">
-        <div class="complaint-wrap" style="width:240px">
-          <div class="complaint-stamp" style="animation:stampAnim 0.5s ease forwards">접수</div>
-          <div class="complaint-title">고 소 장</div>
-          <div class="complaint-label">사건명</div>
-          <div class="complaint-body">${t}</div>
-          <div class="complaint-footer">윤원가정법원 귀중</div>
-        </div>
-      </div>
-      <div id="submit-status" style="font-size:var(--font-sm);color:#5a3a1a;font-weight:700;margin-top:8px">📤 접수 중...</div>
-    </div>`;
-  setTimeout(()=>{
-    const fc=document.getElementById('flying-complaint');
-    if(fc){fc.style.transform='translateY(80px) scale(0.5)';fc.style.opacity='0';}
-  },600);
-  setTimeout(()=>{
-    const st=document.getElementById('submit-status');
-    if(st) st.innerHTML='<div style="font-size:36px">✅</div><div style="font-size:var(--font-base);font-weight:700;color:#2ecc71;margin-top:8px">고소장이 접수되었습니다!</div>';
-  },1400);
-
-  // Firebase에 방 생성
-  waitFirebase(async ()=>{
-    const roomRef=window.dbRef(window.db, 'rooms/'+S.roomCode);
-    await window.dbSet(roomRef, {
-      topic: S.topic,
-      status: 'waiting',
-      plaintiff: {name: S.userName, statement:'', ready:false},
-      defendant: {name:'', statement:'', ready:false},
-      verdict: null,
-      createdAt: Date.now()
-    });
-    setTimeout(()=>{
-      document.getElementById('generated-code').textContent=S.roomCode;
-      document.getElementById('code-topic').textContent=S.topic;
-      document.getElementById('plaintiff-status').textContent=S.userName+' (입장 완료)';
-      show('s-code');
-      listenForDefendant(); // 피고 입장 대기
-    }, 2800);
+// ══ LOBBY ══
+function goCounter(){
+  S.role='원고';
+  if(S.isYujin){
+    show('pg-judge-lobby'); // 유진이면 판사 로비 페이지
+  } else {
+    show('pg-counter');
+  }
+}
+function showJudgePick(){show('pg-judge-pick');}
+function goToCounter(){show('pg-counter');}
+function selectJudge(type){
+  S.bribedJudge=true;
+  const nm=type==='strict'?'판사 김엄격':'판사 이관대';
+  document.getElementById('bribe-icon').textContent=type==='strict'?'😤':'😊';
+  document.getElementById('bribe-name').textContent=nm+' 선택됨';
+  document.getElementById('bribe-bar').style.width='0%';
+  document.getElementById('bribe-st').textContent='거래 진행 중...';
+  opop('ov-bribe');
+  setTimeout(()=>{document.getElementById('bribe-bar').style.width='100%';},100);
+  setTimeout(()=>{document.getElementById('bribe-st').textContent='💰 거래 완료! 판사가 윙크했습니다 😉';},2200);
+  setTimeout(()=>{cpop('ov-bribe');show('pg-counter');},3500);
+}
+async function goEnterCode(){
+  const c=document.getElementById('code-input').value.trim().toUpperCase();
+  if(c.length<4)return;
+  S.role='피고';S.roomCode=c;
+  wfb(async()=>{
+    const snap=await window.dbGet(window.dbRef(window.db,'rooms/'+c));
+    if(!snap.exists()){alert('존재하지 않는 초대코드입니다.');return;}
+    const data=snap.val();
+    S.topic=data.topic;S.plaintiffName=data.plaintiff.name;
+    await window.dbUpdate(window.dbRef(window.db,'rooms/'+c+'/defendant'),{name:S.userName,statement:'',ready:false});
+    startEntryAnim();
   });
 }
 
-// 피고 입장 감지
-function listenForDefendant(){
-  waitFirebase(()=>{
-    const roomRef=window.dbRef(window.db,'rooms/'+S.roomCode);
-    if(roomListener) roomListener();
-    roomListener=window.dbOnValue(roomRef, snap=>{
-      const data=snap.val();
-      if(!data) return;
-      if(data.defendant && data.defendant.name){
-        S.defendantName=data.defendant.name;
-        document.getElementById('defendant-status').textContent=data.defendant.name+' (입장 완료) ✅';
-        document.querySelector('#opponent-wait-card .dot-orange').classList.remove('dot-orange');
-        document.querySelector('#opponent-wait-card .status-dot:last-of-type, #opponent-wait-card div:last-of-type .status-dot').classList.add('dot-green');
-        // 1.5초 후 변론 준비로 이동
-        setTimeout(()=>{
-          if(roomListener){roomListener();roomListener=null;}
-          goBrief();
-        },1500);
+// ══ COUNTER ══
+function submitCounter(){
+  const t=document.getElementById('tt').value.trim();
+  if(!t)return;
+  S.topic=t;S.roomCode=genCode();
+  const ci=document.getElementById('ci');
+  ci.innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:10px 0;min-height:200px;justify-content:center;overflow:hidden">
+    <div id="fc" style="transition:all 1s cubic-bezier(0.4,0,0.2,1)">
+      <div class="cpl" style="width:240px">
+        <div class="cs" style="animation:stampAnim .5s ease forwards">접수</div>
+        <div class="ct">고 소 장</div><div style="font-size:10px;color:#555;margin-bottom:5px">사건명</div>
+        <div class="cb">${t}</div><div class="cf">윤원가정법원 귀중</div>
+      </div>
+    </div>
+    <div id="fst" style="font-size:var(--fs);color:#5a3a1a;font-weight:700;margin-top:8px">📤 접수 중...</div>
+  </div>`;
+  setTimeout(()=>{const fc=document.getElementById('fc');if(fc){fc.style.transform='translateY(80px) scale(0.5)';fc.style.opacity='0';}},600);
+  setTimeout(()=>{const fs=document.getElementById('fst');if(fs)fs.innerHTML='<div style="font-size:36px">✅</div><div style="font-size:var(--fs);font-weight:700;color:#2ecc71;margin-top:8px">고소장이 접수되었습니다!</div>';},1400);
+  wfb(async()=>{
+    await window.dbSet(window.dbRef(window.db,'rooms/'+S.roomCode),{
+      topic:S.topic,status:'waiting',
+      plaintiff:{name:S.userName,statement:'',ready:false},
+      defendant:{name:'',statement:'',ready:false},
+      verdict:null,createdAt:Date.now()
+    });
+    setTimeout(()=>{
+      document.getElementById('gc').textContent=S.roomCode;
+      document.getElementById('ct2').textContent=S.topic;
+      document.getElementById('ps').textContent=S.userName+' (입장 완료)';
+      show('pg-code');
+      listenDefendant();
+    },2800);
+  });
+}
+function listenDefendant(){
+  wfb(()=>{
+    const r=window.dbRef(window.db,'rooms/'+S.roomCode);
+    if(roomListener){roomListener();roomListener=null;}
+    roomListener=window.dbOnValue(r,snap=>{
+      const d=snap.val();
+      if(!d)return;
+      if(d.defendant&&d.defendant.name){
+        S.defendantName=d.defendant.name;
+        document.getElementById('ds').textContent=d.defendant.name+' (입장 완료) ✅';
+        setTimeout(()=>{if(roomListener){roomListener();roomListener=null;}goBrief();},1500);
       }
     });
   });
 }
 
-// ════════════════════════════════
-// STEP2: 로비 — 피고 (방 입장)
-// ════════════════════════════════
-async function goEnterCode(){
-  const c=document.getElementById('code-input').value.trim().toUpperCase();
-  if(c.length<4)return;
-  S.role='피고';
-  S.roomCode=c;
-  waitFirebase(async ()=>{
-    const roomRef=window.dbRef(window.db,'rooms/'+c);
-    const snap=await window.dbGet(roomRef);
-    if(!snap.exists()){
-      alert('존재하지 않는 초대코드입니다.');
-      return;
-    }
-    const data=snap.val();
-    S.topic=data.topic;
-    S.plaintiffName=data.plaintiff.name;
-    // 피고 이름 Firebase에 등록
-    await window.dbUpdate(window.dbRef(window.db,'rooms/'+c+'/defendant'),{
-      name: S.userName, statement:'', ready:false
-    });
-    // 입장 애니메이션
-    startEntryAnim();
-  });
-}
-
-// ════════════════════════════════
-// 입장 애니메이션
-// ════════════════════════════════
+// ══ 입장 애니메이션 ══
 function startEntryAnim(){
-  const ov=document.getElementById('entry-overlay');
-  ov.classList.add('active');
-  document.getElementById('entry-phase0').style.display='flex';
-  document.getElementById('entry-phase1').style.display='none';
-  document.getElementById('entry-complaint').innerHTML=`
-    <div class="complaint-wrap">
-      <div class="complaint-stamp">접수</div>
-      <div class="complaint-title">고 소 장</div>
-      <div class="complaint-label">사건명</div>
-      <div class="complaint-body">${S.topic}</div>
-      <div class="complaint-footer">윤원가정법원 귀중</div>
-    </div>`;
+  const ov=document.getElementById('ov-entry');
+  ov.classList.add('on');
+  document.getElementById('ep0').style.display='flex';
+  document.getElementById('ep1').style.display='none';
+  document.getElementById('ec').innerHTML=`<div class="cpl"><div class="cs">접수</div><div class="ct">고 소 장</div><div style="font-size:10px;color:#555;margin-bottom:5px">사건명</div><div class="cb">${S.topic}</div><div class="cf">윤원가정법원 귀중</div></div>`;
   setTimeout(()=>{
-    document.getElementById('entry-phase0').style.display='none';
-    document.getElementById('entry-phase1').style.display='flex';
-    const ws=document.getElementById('walk-svg');
-    if(ws){ws.style.transform='translate(300px,0)'; setTimeout(()=>{ws.style.opacity='0';},2200);}
+    document.getElementById('ep0').style.display='none';
+    document.getElementById('ep1').style.display='flex';
+    const ws=document.getElementById('ws');
+    if(ws){ws.style.transform='translate(300px,0)';setTimeout(()=>{ws.style.opacity='0';},2200);}
   },2200);
-  setTimeout(()=>{ov.classList.remove('active'); goBrief();},5000);
+  setTimeout(()=>{ov.classList.remove('on');goBrief();},5000);
 }
 
-// ════════════════════════════════
-// STEP6: 변론 준비
-// ════════════════════════════════
+// ══ BRIEF ══
 function goBrief(){
-  document.getElementById('brief-user').textContent='👤 '+S.userName+'님 ('+S.role+')';
-  show('s-brief');
-  renderLawyer('lawyer-svg',false,false);
+  document.getElementById('bu').textContent='👤 '+S.userName+'님 ('+S.role+')';
+  show('pg-brief');
+  rl('lsvg',false,false);
   S.briefMsgs=[
     '안녕하세요! 저는 담당 변호사 김정의입니다. ⚖️',
     `이번 사건은 "${S.topic}"에 관한 분쟁입니다.`,
     '당신의 입장과 상대방이 왜 잘못했는지 솔직하게 말씀해 주시면 제가 변론문 초안을 작성해 드리겠습니다.',
   ];
-  S.lawyerIdx=0;
-  showLawyerMsg(0);
+  S.lawyerIdx=0;showLMsg(0);
 }
-function showLawyerMsg(idx){
-  const el=document.getElementById('lawyer-text');
-  const btn=document.getElementById('lawyer-next-btn');
-  btn.style.display='none';
-  renderLawyer('lawyer-svg',true,false);
+function showLMsg(idx){
+  const el=document.getElementById('lt'),btn=document.getElementById('lnb');
+  btn.style.display='none';rl('lsvg',true,false);
   typeText(el,S.briefMsgs[idx],35,()=>{
-    renderLawyer('lawyer-svg',false,false);
-    btn.style.display='block';
+    rl('lsvg',false,false);btn.style.display='block';
     btn.textContent=idx<S.briefMsgs.length-1?'다음 ▶':'알겠습니다 ✓';
   });
 }
 function lawyerNext(){
-  document.getElementById('lawyer-next-btn').style.display='none';
-  if(S.lawyerIdx<S.briefMsgs.length-1){S.lawyerIdx++;showLawyerMsg(S.lawyerIdx);}
-  else document.getElementById('statement-box').style.display='block';
+  document.getElementById('lnb').style.display='none';
+  if(S.lawyerIdx<S.briefMsgs.length-1){S.lawyerIdx++;showLMsg(S.lawyerIdx);}
+  else document.getElementById('sb').style.display='block';
 }
 async function generateDraft(){
-  const stmt=document.getElementById('my-statement').value.trim();
+  const stmt=document.getElementById('ms').value.trim();
   if(!stmt)return;
-  document.getElementById('lawyer-text').textContent='⚖️ 변론문 초안을 작성 중입니다...';
-  document.getElementById('lawyer-next-btn').style.display='none';
-  document.getElementById('statement-box').style.display='none';
+  document.getElementById('lt').textContent='⚖️ 변론문 초안을 작성 중입니다...';
+  document.getElementById('lnb').style.display='none';
+  document.getElementById('sb').style.display='none';
   const sys=`당신은 연인 간의 사소한 분쟁을 맡은 유머러스하지만 진지한 변호사입니다. 의뢰인의 입장을 듣고 변론문 초안을 작성하세요. 법정 변론문 스타일로 300자 내외. 존댓말.`;
   const result=await callClaude([{role:'user',content:`사건: ${S.topic}\n의뢰인 역할: ${S.role}\n의뢰인 진술: ${stmt}`}],sys);
-  document.getElementById('lawyer-text').textContent='초안이 완성되었습니다! 아래에서 수정 후 최종 확정하세요. 📝';
-  document.getElementById('final-statement').value=result;
-  document.getElementById('draft-box').style.display='block';
+  document.getElementById('lt').textContent='초안이 완성되었습니다! 아래에서 수정 후 최종 확정하세요. 📝';
+  document.getElementById('fs2').value=result;
+  document.getElementById('db').style.display='block';
 }
-
-// ════════════════════════════════
-// 변론문 제출 → Firebase 저장 → 양쪽 완료 감지
-// ════════════════════════════════
 async function submitFinal(){
-  const stmt=document.getElementById('final-statement').value;
-  document.getElementById('draft-box').style.display='none';
-  document.getElementById('lawyer-text').textContent='변론문이 확정되었습니다! ✅';
-
-  waitFirebase(async ()=>{
-    const path = S.role==='원고' ? 'rooms/'+S.roomCode+'/plaintiff' : 'rooms/'+S.roomCode+'/defendant';
-    await window.dbUpdate(window.dbRef(window.db, path),{
-      statement: stmt, ready: true
-    });
-    // 대기 화면으로
+  const stmt=document.getElementById('fs2').value;
+  document.getElementById('db').style.display='none';
+  document.getElementById('lt').textContent='변론문이 확정되었습니다! ✅';
+  wfb(async()=>{
+    const path=S.role==='원고'?'rooms/'+S.roomCode+'/plaintiff':'rooms/'+S.roomCode+'/defendant';
+    await window.dbUpdate(window.dbRef(window.db,path),{statement:stmt,ready:true});
     startWaiting();
   });
 }
 
-// ════════════════════════════════
-// STEP8: 양쪽 제출 대기
-// ════════════════════════════════
+// ══ WAIT ══
 function startWaiting(){
-  show('s-wait');
-  const pName = S.role==='원고' ? S.userName : S.plaintiffName||'원고';
-  const dName = S.role==='피고' ? S.userName : S.defendantName||'피고';
-  document.getElementById('wait-p-name').textContent=pName;
-  document.getElementById('wait-d-name').textContent=dName;
-
-  waitFirebase(()=>{
-    const roomRef=window.dbRef(window.db,'rooms/'+S.roomCode);
+  show('pg-wait');
+  document.getElementById('wpn').textContent=S.plaintiffName||'원고';
+  document.getElementById('wdn').textContent=S.defendantName||'피고';
+  wfb(()=>{
+    const r=window.dbRef(window.db,'rooms/'+S.roomCode);
     if(roomListener){roomListener();roomListener=null;}
-    roomListener=window.dbOnValue(roomRef, snap=>{
-      const data=snap.val();
-      if(!data)return;
-      const pReady=data.plaintiff?.ready||false;
-      const dReady=data.defendant?.ready||false;
-
-      document.getElementById('wait-p-status').textContent=pReady?'✅ 제출 완료':'⏳ 작성 중...';
-      document.getElementById('wait-d-status').textContent=dReady?'✅ 제출 완료':'⏳ 작성 중...';
-
-      if(pReady && dReady){
-        document.getElementById('wait-msg').textContent='양측 모두 준비 완료! 재판을 시작합니다 ⚖️';
-        S.plaintiffStatement=data.plaintiff.statement;
-        S.defendantStatement=data.defendant.statement;
-        S.plaintiffName=data.plaintiff.name;
-        S.defendantName=data.defendant.name;
+    roomListener=window.dbOnValue(r,snap=>{
+      const d=snap.val();if(!d)return;
+      const pr=d.plaintiff?.ready||false,dr=d.defendant?.ready||false;
+      document.getElementById('wps').textContent=pr?'✅ 제출 완료':'⏳ 작성 중...';
+      document.getElementById('wds').textContent=dr?'✅ 제출 완료':'⏳ 작성 중...';
+      if(pr&&dr){
+        document.getElementById('wm').textContent='양측 모두 준비 완료! 재판을 시작합니다 ⚖️';
+        S.plaintiffStatement=d.plaintiff.statement;S.defendantStatement=d.defendant.statement;
+        S.plaintiffName=d.plaintiff.name;S.defendantName=d.defendant.name;
         if(roomListener){roomListener();roomListener=null;}
-        // 원고만 판결 AI 호출 (중복 방지), 피고는 판결 결과 리슨
-        setTimeout(()=>{
-          if(S.role==='원고') startTrial();
-          else listenForVerdict();
-        },2000);
+        setTimeout(()=>{if(S.role==='원고')startTrial();else listenForVerdict();},2000);
       }
     });
   });
 }
 
-// ════════════════════════════════
-// STEP9: 재판 (원고만 AI 호출)
-// ════════════════════════════════
-function clearTrialTimers(){trialTimers.forEach(t=>clearInterval(t));trialTimers=[];}
+// ══ TRIAL ══
+function ctt(){tTimers.forEach(t=>clearInterval(t));tTimers=[];}
+function showTrial(){document.getElementById('pg-trial').style.display='flex';}
+function showVerdict2(){document.getElementById('pg-trial').style.display='none';document.getElementById('pg-verdict').style.display='flex';}
 
 async function startTrial(){
-  clearTrialTimers();
-  show('s-wait');
-  showTrial();
-  renderLawyer('svg-p',false,false);
-  renderLawyer('svg-d',false,false);
-  renderJudge('svg-j',false,false);
-  renderJudge('judge-verdict-svg',false,false);
+  ctt();show('pg-wait');showTrial();
+  rl('svp',false,false);rl('svd',false,false);rj('svj',false,false);rj('jvs',false,false);
+  document.getElementById('lbp').textContent=(S.plaintiffName||'원고')+' 측 변호인';
+  document.getElementById('lbd').textContent=(S.defendantName||'피고')+' 측 변호인';
+  document.getElementById('vpn').textContent=S.plaintiffName||'원고';
+  document.getElementById('vdn').textContent=S.defendantName||'피고';
 
-  document.getElementById('label-p').textContent=(S.plaintiffName||'원고')+' 측 변호인';
-  document.getElementById('label-d').textContent=(S.defendantName||'피고')+' 측 변호인';
-  document.getElementById('verdict-p-name').textContent=S.plaintiffName||'원고';
-  document.getElementById('verdict-d-name').textContent=S.defendantName||'피고';
-
-  // 개정 애니메이션 + AI 병렬 호출
   const sys='당신은 법정 변호사입니다. 변론문을 바탕으로 핵심 주장을 2-3문장으로 요약하세요. 법정 스타일, 존댓말.';
-  const [pArg, dArg] = await Promise.all([
+  const [pArg,dArg]=await Promise.all([
     callClaude([{role:'user',content:`원고 변론문: ${S.plaintiffStatement}\n핵심 주장 2-3문장 요약.`}],sys),
     callClaude([{role:'user',content:`피고 변론문: ${S.defendantStatement}\n핵심 주장 2-3문장 요약.`}],sys)
   ]);
-  S.plaintiffArg=pArg;
-  S.defendantArg=dArg;
+  S.plaintiffArg=pArg;S.defendantArg=dArg;
+  wfb(async()=>{await window.dbUpdate(window.dbRef(window.db,'rooms/'+S.roomCode),{plaintiffArg:pArg,defendantArg:dArg});});
 
-  // Firebase에 변론 요약 저장 (피고 미러링용)
-  waitFirebase(async()=>{
-    await window.dbUpdate(window.dbRef(window.db,'rooms/'+S.roomCode),{
-      plaintiffArg:pArg, defendantArg:dArg
-    });
-  });
-
-  const gavel=document.getElementById('gavel-icon');
-  const overlay=document.getElementById('gavel-overlay');
+  const gi=document.getElementById('gi'),gov=document.getElementById('gov');
   let big=false,cnt=0;
   const gt=setInterval(()=>{
-    big=!big;gavel.style.fontSize=big?'clamp(80px,22vw,110px)':'clamp(60px,16vw,80px)';cnt++;
-    if(cnt>=6){clearInterval(gt);setTimeout(()=>{overlay.style.display='none';runPlaintiff();},400);}
+    big=!big;gi.style.fontSize=big?'clamp(80px,22vw,110px)':'clamp(60px,16vw,80px)';cnt++;
+    if(cnt>=6){clearInterval(gt);setTimeout(()=>{gov.style.display='none';runP();},400);}
   },450);
-  trialTimers.push(gt);
+  tTimers.push(gt);
 }
 
-async function runPlaintiff(){
-  document.getElementById('case-banner').style.display='block';
-  document.getElementById('case-banner').textContent='⚖️ '+S.topic;
-  document.getElementById('chars-layer').style.display='flex';
-  document.getElementById('slot-p').style.opacity='1';
-  document.getElementById('slot-p').style.filter='drop-shadow(0 0 14px rgba(100,160,255,.7))';
-  document.getElementById('slot-d').style.opacity='.4';
-  document.getElementById('slot-j').style.opacity='.6';
-
+function runP(){
+  document.getElementById('cbn').style.display='block';
+  document.getElementById('cbn').textContent='⚖️ '+S.topic;
+  document.getElementById('chl').style.display='flex';
+  document.getElementById('sp2').style.opacity='1';
+  document.getElementById('sp2').style.filter='drop-shadow(0 0 14px rgba(100,160,255,.7))';
+  document.getElementById('sd2').style.opacity='.4';
+  document.getElementById('sj2').style.opacity='.6';
   let arm=false;
-  const lt=setInterval(()=>{arm=!arm;renderLawyer('svg-p',true,arm);},600);
-  trialTimers.push(lt);
-  const bubble=document.getElementById('bubble-p');
-  bubble.style.display='block';
-  typeText(document.getElementById('bubble-p-text'),S.plaintiffArg,35,()=>{
-    clearInterval(lt);renderLawyer('svg-p',false,false);
-    setTimeout(()=>{bubble.style.display='none';runDefendant();},5000);
+  const lt=setInterval(()=>{arm=!arm;rl('svp',true,arm);},600);
+  tTimers.push(lt);
+  const bub=document.getElementById('bp2');bub.style.display='block';
+  typeText(document.getElementById('bpt'),S.plaintiffArg,35,()=>{
+    clearInterval(lt);rl('svp',false,false);
+    setTimeout(()=>{bub.style.display='none';runD();},5000);
   },1);
 }
-
-async function runDefendant(){
-  document.getElementById('slot-d').style.opacity='1';
-  document.getElementById('slot-d').style.filter='drop-shadow(0 0 14px rgba(255,120,100,.7))';
-  document.getElementById('slot-p').style.opacity='.4';
-  document.getElementById('slot-p').style.filter='none';
-
+function runD(){
+  document.getElementById('sd2').style.opacity='1';
+  document.getElementById('sd2').style.filter='drop-shadow(0 0 14px rgba(255,120,100,.7))';
+  document.getElementById('sp2').style.opacity='.4';
+  document.getElementById('sp2').style.filter='none';
   let arm=false;
-  const lt=setInterval(()=>{arm=!arm;renderLawyer('svg-d',true,arm);},600);
-  trialTimers.push(lt);
-  const bubble=document.getElementById('bubble-d');
-  bubble.style.display='block';
-  typeText(document.getElementById('bubble-d-text'),S.defendantArg,35,()=>{
-    clearInterval(lt);renderLawyer('svg-d',false,false);
-    setTimeout(()=>{bubble.style.display='none';runJudge();},5000);
+  const lt=setInterval(()=>{arm=!arm;rl('svd',true,arm);},600);
+  tTimers.push(lt);
+  const bub=document.getElementById('bd2');bub.style.display='block';
+  typeText(document.getElementById('bdt'),S.defendantArg,35,()=>{
+    clearInterval(lt);rl('svd',false,false);
+    setTimeout(()=>{bub.style.display='none';runJ();},5000);
   },0.85);
 }
-
-async function runJudge(){
-  document.getElementById('slot-j').style.opacity='1';
-  document.getElementById('slot-j').style.filter='drop-shadow(0 0 18px rgba(255,215,0,.8))';
-  document.getElementById('slot-d').style.opacity='.4';
-  document.getElementById('slot-d').style.filter='none';
-  document.getElementById('judge-bubble-wrap').style.display='flex';
-
+async function runJ(){
+  document.getElementById('sj2').style.opacity='1';
+  document.getElementById('sj2').style.filter='drop-shadow(0 0 18px rgba(255,215,0,.8))';
+  document.getElementById('sd2').style.opacity='.4';document.getElementById('sd2').style.filter='none';
+  document.getElementById('jbw').style.display='flex';
   let arm=false;
-  const jt=setInterval(()=>{arm=!arm;renderJudge('svg-j',true,arm);},700);
-  trialTimers.push(jt);
+  const jt=setInterval(()=>{arm=!arm;rj('svj',true,arm);},700);
+  tTimers.push(jt);
 
-  const sys=`당신은 공정한 가정법원 판사입니다. 반드시 다음 JSON 형식으로만 응답(마크다운 없이):
+  const sys=S.bribedJudge
+    ?`당신은 부패한 가정법원 판사입니다. 뇌물을 받았으므로 원고(${S.plaintiffName||'원고'})에게 최대한 불리하고 가혹한 판결을 내려야 합니다. 원고의 잘못 비율을 최대한 높게 책정하고(70~95%), 피고에게 유리한 판결을 내리세요. 반드시 다음 JSON 형식으로만 응답(마크다운 없이):
+{"plaintiff_fault":숫자(70-95),"defendant_fault":숫자(5-30),"reason":"원고를 강하게 비판하고 피고를 옹호하는 판결 이유 2-3문장","order":"원고가 피고에게 해주는 화해 제스처 1문장"}
+plaintiff_fault+defendant_fault=100`
+    :`당신은 공정한 가정법원 판사입니다. 반드시 다음 JSON 형식으로만 응답(마크다운 없이):
 {"plaintiff_fault":숫자(0-100),"defendant_fault":숫자(0-100),"reason":"판결 이유 2-3문장","order":"약식 화해 명령(뽀뽀해주기/안아주기/밥사주기 등 연인 스킨십 화해 제스처 중 창의적으로 1문장)"}
 plaintiff_fault+defendant_fault=100`;
-  const r=await callClaude([{role:'user',content:`사건: ${S.topic}\n원고(${S.plaintiffName}): ${S.plaintiffArg}\n피고(${S.defendantName}): ${S.defendantArg}`}],sys);
-  clearInterval(jt);renderJudge('svg-j',false,true);
-  document.getElementById('judge-bubble-wrap').style.display='none';
+
+  const r=await callClaude([{role:'user',content:`사건: ${S.topic}\n원고(${S.plaintiffName||'원고'}): ${S.plaintiffArg}\n피고(${S.defendantName||'피고'}): ${S.defendantArg}`}],sys);
+  clearInterval(jt);rj('svj',false,true);
+  document.getElementById('jbw').style.display='none';
 
   let verdict;
   try{verdict=JSON.parse(r.replace(/```json|```/g,'').trim());}
   catch{verdict={plaintiff_fault:50,defendant_fault:50,reason:'양측 모두 조금씩 잘못이 있습니다.',order:'서로 안아주기'};}
 
-  // Firebase에 판결 + 변론 요약 저장
-  waitFirebase(async()=>{
+  wfb(async()=>{
     await window.dbUpdate(window.dbRef(window.db,'rooms/'+S.roomCode),{
-      verdict:verdict, status:'done'
+      verdict:verdict,status:'done',plaintiffArg:S.plaintiffArg,defendantArg:S.defendantArg
     });
   });
+  ctt();
 
-  clearTrialTimers();
-  showVerdictScreen(verdict);
+  if(S.bribedJudge) showArrest(()=>showVerdictScreen(verdict));
+  else showVerdictScreen(verdict);
 }
 
-// 피고: Firebase 실시간 감지로 원고 화면 미러링
+// ══ 피고 미러링 ══
 function listenForVerdict(){
-  show('s-wait');
-  showTrial();
-  renderLawyer('svg-p',false,false);
-  renderLawyer('svg-d',false,false);
-  renderJudge('svg-j',false,false);
-  document.getElementById('label-p').textContent=(S.plaintiffName||'원고')+' 측 변호인';
-  document.getElementById('label-d').textContent=(S.defendantName||'피고')+' 측 변호인';
-  document.getElementById('verdict-p-name').textContent=S.plaintiffName||'원고';
-  document.getElementById('verdict-d-name').textContent=S.defendantName||'피고';
+  show('pg-wait');showTrial();
+  rl('svp',false,false);rl('svd',false,false);rj('svj',false,false);
+  document.getElementById('lbp').textContent=(S.plaintiffName||'원고')+' 측 변호인';
+  document.getElementById('lbd').textContent=(S.defendantName||'피고')+' 측 변호인';
+  document.getElementById('vpn').textContent=S.plaintiffName||'원고';
+  document.getElementById('vdn').textContent=S.defendantName||'피고';
 
-  const gavel=document.getElementById('gavel-icon');
-  const overlay=document.getElementById('gavel-overlay');
-  overlay.style.display='flex';
+  const gi=document.getElementById('gi'),gov=document.getElementById('gov');
+  gov.style.display='flex';
   let big=false,cnt=0;
   const gt=setInterval(()=>{
-    big=!big;
-    gavel.style.fontSize=big?'clamp(80px,22vw,110px)':'clamp(60px,16vw,80px)';
-    cnt++;
-    if(cnt>=6){
-      clearInterval(gt);
-      overlay.style.display='none';
-      // ★ 개정 애니메이션 완전히 끝난 후 Firebase 리스닝 시작
-      startMirrorListening();
-    }
+    big=!big;gi.style.fontSize=big?'clamp(80px,22vw,110px)':'clamp(60px,16vw,80px)';cnt++;
+    if(cnt>=6){clearInterval(gt);gov.style.display='none';startMirror();}
   },450);
-  trialTimers.push(gt);
+  tTimers.push(gt);
 }
 
-function startMirrorListening(){
+function startMirror(){
   const state={phase:'waiting'};
-
-  // 현재 Firebase 값 먼저 한 번 읽어서 이미 도착한 데이터 처리
-  waitFirebase(async ()=>{
-    const roomRef=window.dbRef(window.db,'rooms/'+S.roomCode);
-    const snap=await window.dbGet(roomRef);
-    const existing=snap.val()||{};
-
-    // 이미 plaintiffArg가 있으면 바로 원고 변론 재생
-    if(existing.plaintiffArg){
-      playPlaintiffBubble(existing.plaintiffArg, state, existing.defendantArg);
-      return;
+  wfb(async()=>{
+    const r=window.dbRef(window.db,'rooms/'+S.roomCode);
+    const snap=await window.dbGet(r);
+    const ex=snap.val()||{};
+    if(ex.plaintiffArg){
+      playPBubble(ex.plaintiffArg,state,ex.defendantArg);return;
     }
-
-    // 아직 없으면 실시간 감지
     if(roomListener){roomListener();roomListener=null;}
-    roomListener=window.dbOnValue(roomRef,snap=>{
-      const data=snap.val();
-      if(!data)return;
-
-      if(state.phase==='waiting' && data.plaintiffArg){
-        state.phase='plaintiff_playing';
-        playPlaintiffBubble(data.plaintiffArg, state, null);
-      }
-      if(state.phase==='defendant' && data.defendantArg){
-        state.phase='defendant_playing';
-        playDefendantBubble(data.defendantArg, state);
-      }
-      if(data.status==='done' && data.verdict && state.phase==='judge'){
-        state.phase='done';
-        if(roomListener){roomListener();roomListener=null;}
-        clearTrialTimers();
-        renderJudge('svg-j',false,true);
-        document.getElementById('judge-bubble-wrap').style.display='none';
-        setTimeout(()=>showVerdictScreen(data.verdict),1000);
+    roomListener=window.dbOnValue(r,snap=>{
+      const d=snap.val();if(!d)return;
+      if(state.phase==='waiting'&&d.plaintiffArg){state.phase='pp';playPBubble(d.plaintiffArg,state,null);}
+      if(state.phase==='defendant'&&d.defendantArg){state.phase='dp';playDBubble(d.defendantArg,state);}
+      if(d.status==='done'&&d.verdict&&state.phase==='judge'){
+        state.phase='done';if(roomListener){roomListener();roomListener=null;}
+        ctt();rj('svj',false,true);document.getElementById('jbw').style.display='none';
+        setTimeout(()=>showVerdictScreen(d.verdict),1000);
       }
     });
   });
 }
 
-function playPlaintiffBubble(pArg, state, dArgAlready){
-  state.phase='plaintiff_playing';
-  document.getElementById('case-banner').style.display='block';
-  document.getElementById('case-banner').textContent='⚖️ '+S.topic;
-  document.getElementById('chars-layer').style.display='flex';
-  document.getElementById('slot-p').style.opacity='1';
-  document.getElementById('slot-p').style.filter='drop-shadow(0 0 14px rgba(100,160,255,.7))';
-  document.getElementById('slot-d').style.opacity='.4';
-  document.getElementById('slot-j').style.opacity='.6';
+function playPBubble(pArg,state,dAlready){
+  state.phase='pp';
+  document.getElementById('cbn').style.display='block';
+  document.getElementById('cbn').textContent='⚖️ '+S.topic;
+  document.getElementById('chl').style.display='flex';
+  document.getElementById('sp2').style.opacity='1';
+  document.getElementById('sp2').style.filter='drop-shadow(0 0 14px rgba(100,160,255,.7))';
+  document.getElementById('sd2').style.opacity='.4';document.getElementById('sj2').style.opacity='.6';
   let arm=false;
-  const lt=setInterval(()=>{arm=!arm;renderLawyer('svg-p',true,arm);},600);
-  trialTimers.push(lt);
-  const bubble=document.getElementById('bubble-p');
-  bubble.style.display='block';
-  typeText(document.getElementById('bubble-p-text'),pArg,35,()=>{
-    clearInterval(lt);renderLawyer('svg-p',false,false);
+  const lt=setInterval(()=>{arm=!arm;rl('svp',true,arm);},600);tTimers.push(lt);
+  const bub=document.getElementById('bp2');bub.style.display='block';
+  typeText(document.getElementById('bpt'),pArg,35,()=>{
+    clearInterval(lt);rl('svp',false,false);
     setTimeout(()=>{
-      bubble.style.display='none';
-      if(dArgAlready){
-        state.phase='defendant_playing';
-        playDefendantBubble(dArgAlready, state);
-      } else {
+      bub.style.display='none';
+      if(dAlready){state.phase='dp';playDBubble(dAlready,state);}
+      else{
         state.phase='defendant';
-        // 실시간 감지로 피고 변론 대기
-        waitFirebase(()=>{
-          const roomRef=window.dbRef(window.db,'rooms/'+S.roomCode);
+        wfb(()=>{
+          const r=window.dbRef(window.db,'rooms/'+S.roomCode);
           if(roomListener){roomListener();roomListener=null;}
-          roomListener=window.dbOnValue(roomRef,snap=>{
-            const data=snap.val();
-            if(!data)return;
-            if(state.phase==='defendant' && data.defendantArg){
-              state.phase='defendant_playing';
-              if(roomListener){roomListener();roomListener=null;}
-              playDefendantBubble(data.defendantArg, state);
-            }
-            if(data.status==='done' && data.verdict && state.phase==='judge'){
-              state.phase='done';
-              if(roomListener){roomListener();roomListener=null;}
-              clearTrialTimers();
-              renderJudge('svg-j',false,true);
-              document.getElementById('judge-bubble-wrap').style.display='none';
-              setTimeout(()=>showVerdictScreen(data.verdict),1000);
+          roomListener=window.dbOnValue(r,snap=>{
+            const d=snap.val();if(!d)return;
+            if(state.phase==='defendant'&&d.defendantArg){state.phase='dp';if(roomListener){roomListener();roomListener=null;}playDBubble(d.defendantArg,state);}
+            if(d.status==='done'&&d.verdict&&state.phase==='judge'){
+              state.phase='done';if(roomListener){roomListener();roomListener=null;}
+              ctt();rj('svj',false,true);document.getElementById('jbw').style.display='none';
+              setTimeout(()=>showVerdictScreen(d.verdict),1000);
             }
           });
         });
       }
-    },10000);
+    },5000);
   },1);
 }
 
-function playDefendantBubble(dArg, state){
-  document.getElementById('slot-d').style.opacity='1';
-  document.getElementById('slot-d').style.filter='drop-shadow(0 0 14px rgba(255,120,100,.7))';
-  document.getElementById('slot-p').style.opacity='.4';
-  document.getElementById('slot-p').style.filter='none';
+function playDBubble(dArg,state){
+  document.getElementById('sd2').style.opacity='1';
+  document.getElementById('sd2').style.filter='drop-shadow(0 0 14px rgba(255,120,100,.7))';
+  document.getElementById('sp2').style.opacity='.4';document.getElementById('sp2').style.filter='none';
   let arm=false;
-  const lt=setInterval(()=>{arm=!arm;renderLawyer('svg-d',true,arm);},600);
-  trialTimers.push(lt);
-  const bubble=document.getElementById('bubble-d');
-  bubble.style.display='block';
-  typeText(document.getElementById('bubble-d-text'),dArg,35,()=>{
-    clearInterval(lt);renderLawyer('svg-d',false,false);
+  const lt=setInterval(()=>{arm=!arm;rl('svd',true,arm);},600);tTimers.push(lt);
+  const bub=document.getElementById('bd2');bub.style.display='block';
+  typeText(document.getElementById('bdt'),dArg,35,()=>{
+    clearInterval(lt);rl('svd',false,false);
     setTimeout(()=>{
-      bubble.style.display='none';
-      state.phase='judge';
-      document.getElementById('slot-j').style.opacity='1';
-      document.getElementById('slot-j').style.filter='drop-shadow(0 0 18px rgba(255,215,0,.8))';
-      document.getElementById('slot-d').style.opacity='.4';
-      document.getElementById('slot-d').style.filter='none';
-      document.getElementById('judge-bubble-wrap').style.display='flex';
-      let jarm=false;
-      const jt=setInterval(()=>{jarm=!jarm;renderJudge('svg-j',true,jarm);},700);
-      trialTimers.push(jt);
-      // 판결 대기
-      waitFirebase(()=>{
-        const roomRef=window.dbRef(window.db,'rooms/'+S.roomCode);
+      bub.style.display='none';state.phase='judge';
+      document.getElementById('sj2').style.opacity='1';document.getElementById('sj2').style.filter='drop-shadow(0 0 18px rgba(255,215,0,.8))';
+      document.getElementById('sd2').style.opacity='.4';document.getElementById('sd2').style.filter='none';
+      document.getElementById('jbw').style.display='flex';
+      let ja=false;const jt=setInterval(()=>{ja=!ja;rj('svj',true,ja);},700);tTimers.push(jt);
+      wfb(()=>{
+        const r=window.dbRef(window.db,'rooms/'+S.roomCode);
         if(roomListener){roomListener();roomListener=null;}
-        roomListener=window.dbOnValue(roomRef,snap=>{
-          const data=snap.val();
-          if(data?.status==='done' && data?.verdict && state.phase==='judge'){
-            state.phase='done';
-            if(roomListener){roomListener();roomListener=null;}
-            clearTrialTimers();
-            renderJudge('svg-j',false,true);
-            document.getElementById('judge-bubble-wrap').style.display='none';
-            setTimeout(()=>showVerdictScreen(data.verdict),1000);
+        roomListener=window.dbOnValue(r,snap=>{
+          const d=snap.val();
+          if(d?.status==='done'&&d?.verdict&&state.phase==='judge'){
+            state.phase='done';if(roomListener){roomListener();roomListener=null;}
+            ctt();rj('svj',false,true);document.getElementById('jbw').style.display='none';
+            setTimeout(()=>showVerdictScreen(d.verdict),1000);
           }
         });
       });
@@ -1324,272 +1122,169 @@ function playDefendantBubble(dArg, state){
   },0.85);
 }
 
-// ════════════════════════════════
-// STEP10: 판결 결과
-// ════════════════════════════════
+// ══ 체포 애니메이션 ══
+function showArrest(onDone){
+  const ov=document.getElementById('ov-arrest');ov.classList.add('on');
+  document.getElementById('arr-title').textContent='🚨 잠깐!!!';
+  document.getElementById('arr-msg').textContent='';
+  const cop=document.getElementById('arr-cop'),yujin=document.getElementById('arr-yujin'),jail=document.getElementById('arr-jail');
+  cop.style.transition='none';yujin.style.transition='none';jail.style.transition='none';
+  cop.style.left='-80px';yujin.style.right='40px';jail.style.right='-120px';
+  setTimeout(()=>{
+    cop.style.transition='left 1s ease';
+    yujin.style.transition='right 1.5s ease';
+    jail.style.transition='right 1.5s ease 0.5s';
+  },50);
+  setTimeout(()=>{cop.style.left='20px';},300);
+  setTimeout(()=>{
+    document.getElementById('arr-msg').innerHTML=`<span style="color:#ff4444;font-weight:900">"${S.userName}님, 부정 청탁 혐의로<br>잠시 같이 가주셔야 겠습니다."</span>`;
+    bleep(0.6);
+  },1500);
+  setTimeout(()=>{jail.style.right='0px';setTimeout(()=>{yujin.style.right='-20px';cop.style.left='60px';},600);},3000);
+  setTimeout(()=>{
+    document.getElementById('arr-title').textContent='🔒 철컹철컹...';
+    document.getElementById('arr-msg').innerHTML=`<span style="color:#aaa;">부정 청탁 혐의 확정<br>재판은 계속 진행됩니다...</span>`;
+    bleep(0.4);
+  },5000);
+  setTimeout(()=>{ov.classList.remove('on');if(onDone)onDone();},7000);
+}
+
+// ══ 판결 화면 ══
 function showVerdictScreen(v){
-  showVerdict();
-  const pf=v.plaintiff_fault, df=v.defendant_fault;
+  showVerdict2();
+  const pf=v.plaintiff_fault,df=v.defendant_fault;
   let big=false,cnt=0;
-  const vg=document.getElementById('verdict-gavel-icon');
+  const vgi=document.getElementById('vgi');
   const vgI=setInterval(()=>{
-    big=!big;vg.style.fontSize=big?'clamp(90px,24vw,120px)':'clamp(65px,18vw,80px)';cnt++;
+    big=!big;vgi.style.fontSize=big?'clamp(90px,24vw,120px)':'clamp(65px,18vw,80px)';cnt++;
     if(cnt>=6){
       clearInterval(vgI);
-      document.getElementById('verdict-gavel').style.display='none';
-      document.getElementById('verdict-content').style.display='flex';
-      document.getElementById('verdict-topic').textContent=S.topic;
-      document.getElementById('pct-p').textContent=pf+'%';
-      document.getElementById('pct-d').textContent=df+'%';
+      document.getElementById('vg').style.display='none';
+      document.getElementById('vc').style.display='flex';
+      document.getElementById('vtpc').textContent=S.topic;
+      document.getElementById('pp').textContent=pf+'%';
+      document.getElementById('dp').textContent=df+'%';
       setTimeout(()=>{
-        document.getElementById('bar-p').style.width=pf+'%';
-        document.getElementById('bar-d').style.width=df+'%';
-        document.getElementById('bar-p-label').textContent=pf>=15?pf+'%':'';
-        document.getElementById('bar-d-label').textContent=df>=15?df+'%':'';
+        document.getElementById('bp3').style.width=pf+'%';
+        document.getElementById('bd3').style.width=df+'%';
+        document.getElementById('bpl').textContent=pf>=15?pf+'%':'';
+        document.getElementById('bdl').textContent=df>=15?df+'%':'';
       },100);
       const w=pf<df?`🏆 ${S.plaintiffName||'원고'} 승소 (${S.defendantName||'피고'}가 ${df}% 잘못)`:pf>df?`🏆 ${S.defendantName||'피고'} 승소 (${S.plaintiffName||'원고'}가 ${pf}% 잘못)`:'⚖️ 동등한 잘못 — 무승부';
-      document.getElementById('verdict-winner').textContent=w;
-      document.getElementById('verdict-reason').textContent=v.reason;
-      document.getElementById('verdict-order-text').textContent=v.order;
-      renderJudge('judge-verdict-svg',false,false);
+      document.getElementById('vw').textContent=w;
+      document.getElementById('vr').textContent=v.reason;
+      document.getElementById('vo').textContent=v.order;
+      rj('jvs',false,false);
     }
   },400);
 }
 
-function resetApp(){
-  clearTrialTimers();
-  if(waitInterval)clearInterval(waitInterval);
-  if(roomListener){roomListener();roomListener=null;}
-  Object.assign(S,{userName:'',topic:'',role:'원고',roomCode:'',plaintiffName:'',defendantName:'',plaintiffStatement:'',defendantStatement:'',plaintiffArg:'',defendantArg:'',isYujin:false,bribedJudge:false});
-  ['name-input','code-input','topic-textarea','my-statement','final-statement'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  const cp=document.getElementById('complaint-preview');if(cp)cp.textContent='...';
-  const sb=document.getElementById('statement-box');if(sb)sb.style.display='none';
-  const db=document.getElementById('draft-box');if(db)db.style.display='none';
-  const go=document.getElementById('gavel-overlay');if(go)go.style.display='flex';
-  const cb=document.getElementById('case-banner');if(cb)cb.style.display='none';
-  const cl=document.getElementById('chars-layer');if(cl)cl.style.display='none';
-  const bp=document.getElementById('bubble-p');if(bp)bp.style.display='none';
-  const bd=document.getElementById('bubble-d');if(bd)bd.style.display='none';
-  const jb=document.getElementById('judge-bubble-wrap');if(jb)jb.style.display='none';
-  const vg=document.getElementById('verdict-gavel');if(vg)vg.style.display='block';
-  const vc=document.getElementById('verdict-content');if(vc)vc.style.display='none';
-  const vs=document.getElementById('verdict-screen');
-  if(vs){vs.style.display='none';vs.classList.remove('active');}
-  const ts=document.getElementById('trial-screen');if(ts)ts.style.display='none';
-  // 슬롯 opacity 초기화
-  const slotP=document.getElementById('slot-p');if(slotP){slotP.style.opacity='.45';slotP.style.filter='none';}
-  const slotD=document.getElementById('slot-d');if(slotD){slotD.style.opacity='.45';slotD.style.filter='none';}
-  const slotJ=document.getElementById('slot-j');if(slotJ){slotJ.style.opacity='.7';slotJ.style.filter='none';}
-  // counter-inner 리셋
-  const ci=document.getElementById('counter-inner');
-  if(ci) ci.innerHTML=`
-    <div style="font-size:var(--font-sm);color:#5a3a1a;font-weight:700;text-align:center">논쟁 주제를 작성하여 제출하세요</div>
-    <div class="complaint-wrap" style="width:100%;max-width:260px">
-      <div class="complaint-stamp">접수</div><div class="complaint-title">고 소 장</div>
-      <div class="complaint-label">사건명</div><div class="complaint-body" id="complaint-preview">...</div>
-      <div class="complaint-footer">윤원가정법원 귀중</div>
-    </div>
-    <textarea id="topic-textarea" class="full-textarea" style="height:64px;border-color:#c8a060;background:#fffef5"
-      placeholder="예: 남자친구가 게임을 너무 오래 해요..."
-      oninput="document.getElementById('complaint-preview').textContent=this.value||'...'"></textarea>
-    <button class="btn-primary" style="max-width:200px" onclick="submitCounter()">제출하기 📨</button>`;
-  // SVG 초기화
-  renderLawyer('lawyer-svg',false,false);
-  renderLawyer('svg-p',false,false);
-  renderLawyer('svg-d',false,false);
-  renderJudge('svg-j',false,false);
-  renderJudge('judge-verdict-svg',false,false);
-  show('s-intro');
-}
-
-// ── 체포 애니메이션 ──
-function showArrestAnimation(onDone){
-  const ov=document.getElementById('arrest-overlay');
-  ov.style.display='flex';
-  document.getElementById('arrest-title').textContent='🚨 잠깐!!!';
-  document.getElementById('arrest-msg').textContent='';
-
-  const cop=document.getElementById('arrest-cop');
-  const yujin=document.getElementById('arrest-yujin');
-  const jail=document.getElementById('arrest-jail');
-
-  // 초기 위치 리셋
-  cop.style.left='-80px';
-  yujin.style.right='40px';
-  jail.style.right='-120px';
-
-  // 경찰 등장
-  setTimeout(()=>{cop.style.left='20px';},300);
-
-  // 경찰 메시지
-  setTimeout(()=>{
-    document.getElementById('arrest-msg').innerHTML=
-      `<span style="color:#ff4444;font-weight:900">"${S.userName}님, 부정 청탁 혐의로<br>잠시 같이 가주셔야 겠습니다."</span>`;
-    playBleep(0.6);
-  },1500);
-
-  // 감옥 등장 + 유진 끌려감
-  setTimeout(()=>{
-    jail.style.right='0px';
-    setTimeout(()=>{
-      yujin.style.right='-20px'; // 감옥 쪽으로
-      cop.style.left='60px';
-    },600);
-  },3000);
-
-  // 감옥 문 닫히는 효과
-  setTimeout(()=>{
-    document.getElementById('arrest-title').textContent='🔒 철컹철컹...';
-    document.getElementById('arrest-msg').innerHTML=
-      `<span style="color:#aaa;">부정 청탁 혐의 확정<br>재판은 계속 진행됩니다...</span>`;
-    playBleep(0.4);
-  },5000);
-
-  // 판결 화면으로
-  setTimeout(()=>{
-    ov.style.display='none';
-    // 위치 리셋
-    cop.style.transition='none';yujin.style.transition='none';jail.style.transition='none';
-    cop.style.left='-80px';yujin.style.right='40px';jail.style.right='-120px';
-    setTimeout(()=>{
-      cop.style.transition='left 1s ease';
-      yujin.style.transition='right 1.5s ease';
-      jail.style.transition='right 1.5s ease 0.5s';
-    },100);
-    if(onDone)onDone();
-  },7000);
-}
-
-// ── 판결문 열람 ──
+// ══ 판결문 열람 ══
 let allVerdicts=[];
-
-async function loadVerdicts(){
-  const list=document.getElementById('verdict-list');
-  const countEl=document.getElementById('verdict-count');
-  list.innerHTML='<div style="text-align:center;padding:40px 0;color:#aaa;font-size:var(--font-sm)">⏳ 판결문을 불러오는 중...</div>';
+function loadVerdicts(){
+  const list=document.getElementById('vlist'),cnt=document.getElementById('vcnt');
+  list.innerHTML='<div style="text-align:center;padding:40px 0;color:#aaa;font-size:var(--fsm)">⏳ 불러오는 중...</div>';
   allVerdicts=[];
-
-  waitFirebase(async()=>{
+  wfb(async()=>{
     try{
-      const roomsRef=window.dbRef(window.db,'rooms');
-      const snap=await window.dbGet(roomsRef);
-      if(!snap.exists()){
-        list.innerHTML='<div style="text-align:center;padding:40px 0;color:#aaa;font-size:var(--font-sm)">📭 아직 판결문이 없습니다</div>';
-        return;
-      }
+      const snap=await window.dbGet(window.dbRef(window.db,'rooms'));
+      if(!snap.exists()){list.innerHTML='<div style="text-align:center;padding:40px 0;color:#aaa;font-size:var(--fsm)">📭 아직 판결문이 없습니다</div>';return;}
       const rooms=snap.val();
-      // 판결 완료된 방만 추출, 최신순 정렬
       allVerdicts=Object.entries(rooms)
-        .filter(([code,data])=>data.status==='done' && data.verdict)
-        .map(([code,data])=>({
-          code,
-          topic: data.topic||'사건명 없음',
-          plaintiff: data.plaintiff?.name||'원고',
-          defendant: data.defendant?.name||'피고',
-          verdict: data.verdict,
-          createdAt: data.createdAt||0
-        }))
+        .filter(([c,d])=>d.status==='done'&&d.verdict)
+        .map(([c,d])=>({code:c,topic:d.topic||'사건명 없음',plaintiff:d.plaintiff?.name||'원고',defendant:d.defendant?.name||'피고',verdict:d.verdict,createdAt:d.createdAt||0}))
         .sort((a,b)=>b.createdAt-a.createdAt);
-
-      countEl.textContent=`총 ${allVerdicts.length}건의 판결문`;
-      renderVerdictList(allVerdicts);
-    }catch(e){
-      list.innerHTML='<div style="text-align:center;padding:40px 0;color:#e74c3c;font-size:var(--font-sm)">❌ 불러오기 실패</div>';
-    }
+      cnt.textContent=`총 ${allVerdicts.length}건의 판결문`;
+      renderVList(allVerdicts);
+    }catch(e){list.innerHTML='<div style="text-align:center;padding:40px 0;color:#e74c3c;font-size:var(--fsm)">❌ 불러오기 실패</div>';}
   });
 }
-
-function renderVerdictList(verdicts){
-  const list=document.getElementById('verdict-list');
-  if(verdicts.length===0){
-    list.innerHTML='<div style="text-align:center;padding:40px 0;color:#aaa;font-size:var(--font-sm)">🔍 검색 결과가 없습니다</div>';
-    return;
-  }
-  list.innerHTML=verdicts.map((v,i)=>{
-    const pf=v.verdict.plaintiff_fault, df=v.verdict.defendant_fault;
-    const winner=pf<df?`🏆 ${v.plaintiff} 승소`:pf>df?`🏆 ${v.defendant} 승소`:'⚖️ 무승부';
-    const date=v.createdAt?new Date(v.createdAt).toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'}):'날짜 미상';
-    return `
-    <div style="background:white;border:1.5px solid #e8eeff;border-radius:12px;padding:14px;box-shadow:0 2px 8px rgba(26,95,168,.07);cursor:pointer;transition:border-color .2s;"
-      onmouseover="this.style.borderColor='#1a5fa8'" onmouseout="this.style.borderColor='#e8eeff'"
-      onclick="toggleVerdictDetail(this)">
-      <!-- 헤더 -->
+function renderVList(verdicts){
+  const list=document.getElementById('vlist');
+  if(!verdicts.length){list.innerHTML='<div style="text-align:center;padding:40px 0;color:#aaa;font-size:var(--fsm)">🔍 검색 결과가 없습니다</div>';return;}
+  list.innerHTML=verdicts.map(v=>{
+    const pf=v.verdict.plaintiff_fault,df=v.verdict.defendant_fault;
+    const w=pf<df?`🏆 ${v.plaintiff} 승소`:pf>df?`🏆 ${v.defendant} 승소`:'⚖️ 무승부';
+    const dt=v.createdAt?new Date(v.createdAt).toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'}):'날짜 미상';
+    return `<div style="background:white;border:1.5px solid #e8eeff;border-radius:12px;padding:14px;box-shadow:0 2px 8px rgba(26,95,168,.07);cursor:pointer;" onclick="toggleVD(this)">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px;">
-        <div style="flex:1;">
-          <div style="font-size:9px;color:#1a5fa8;font-weight:700;margin-bottom:3px;">사건번호 ${date.replace(/\./g,'').replace(/ /g,'-')}-${v.code}</div>
-          <div style="font-size:var(--font-sm);font-weight:700;color:#1a1a1a;line-height:1.4;">${v.topic}</div>
-        </div>
-        <div style="font-size:10px;font-weight:700;color:#FFD700;background:#1a237e;padding:3px 8px;border-radius:12px;white-space:nowrap;flex-shrink:0;">${winner}</div>
+        <div style="flex:1;"><div style="font-size:9px;color:#1a5fa8;font-weight:700;margin-bottom:3px;">사건번호 ${v.code}</div><div style="font-size:var(--fsm);font-weight:700;color:#1a1a1a;line-height:1.4;">${v.topic}</div></div>
+        <div style="font-size:10px;font-weight:700;color:#FFD700;background:#1a237e;padding:3px 8px;border-radius:12px;white-space:nowrap;flex-shrink:0;">${w}</div>
       </div>
-      <!-- 당사자 -->
       <div style="display:flex;gap:8px;margin-bottom:8px;">
-        <div style="flex:1;background:#f0f4ff;border-radius:6px;padding:6px 10px;text-align:center;">
-          <div style="font-size:9px;color:#888;">원고</div>
-          <div style="font-size:var(--font-sm);font-weight:700;color:#1a5fa8;">${v.plaintiff}</div>
-          <div style="font-size:11px;color:#74b9ff;font-weight:700;">${pf}% 잘못</div>
-        </div>
+        <div style="flex:1;background:#f0f4ff;border-radius:6px;padding:6px 10px;text-align:center;"><div style="font-size:9px;color:#888;">원고</div><div style="font-size:var(--fsm);font-weight:700;color:#1a5fa8;">${v.plaintiff}</div><div style="font-size:11px;color:#74b9ff;font-weight:700;">${pf}% 잘못</div></div>
         <div style="display:flex;align-items:center;font-size:16px;">⚖️</div>
-        <div style="flex:1;background:#fff0f0;border-radius:6px;padding:6px 10px;text-align:center;">
-          <div style="font-size:9px;color:#888;">피고</div>
-          <div style="font-size:var(--font-sm);font-weight:700;color:#c0392b;">${v.defendant}</div>
-          <div style="font-size:11px;color:#ff7675;font-weight:700;">${df}% 잘못</div>
-        </div>
+        <div style="flex:1;background:#fff0f0;border-radius:6px;padding:6px 10px;text-align:center;"><div style="font-size:9px;color:#888;">피고</div><div style="font-size:var(--fsm);font-weight:700;color:#c0392b;">${v.defendant}</div><div style="font-size:11px;color:#ff7675;font-weight:700;">${df}% 잘못</div></div>
       </div>
-      <!-- 잘못 비율 바 -->
       <div style="height:8px;border-radius:4px;overflow:hidden;background:#eee;display:flex;margin-bottom:8px;">
         <div style="width:${pf}%;background:linear-gradient(90deg,#74b9ff,#0984e3);"></div>
         <div style="width:${df}%;background:linear-gradient(90deg,#fd79a8,#e17055);"></div>
       </div>
-      <!-- 상세 (토글) -->
-      <div class="verdict-detail" style="display:none;border-top:1px solid #eee;padding-top:10px;margin-top:4px;">
+      <div class="vdet" style="display:none;border-top:1px solid #eee;padding-top:10px;margin-top:4px;">
         <div style="font-size:10px;color:#1a5fa8;font-weight:700;margin-bottom:4px;">📋 판결 이유</div>
-        <div style="font-size:var(--font-sm);color:#333;line-height:1.7;margin-bottom:10px;">${v.verdict.reason}</div>
+        <div style="font-size:var(--fsm);color:#333;line-height:1.7;margin-bottom:10px;">${v.verdict.reason}</div>
         <div style="background:linear-gradient(135deg,#fff9e6,#fff3cc);border:1.5px solid #FFD700;border-radius:8px;padding:10px;text-align:center;">
           <div style="font-size:10px;color:#e67e22;font-weight:700;margin-bottom:4px;">🩷 화해 명령</div>
-          <div style="font-size:var(--font-sm);font-weight:700;color:#1a1a1a;">${v.verdict.order}</div>
+          <div style="font-size:var(--fsm);font-weight:700;color:#1a1a1a;">${v.verdict.order}</div>
         </div>
-        <div style="font-size:9px;color:#aaa;text-align:right;margin-top:8px;">${date} · 판사 이공정</div>
+        <div style="font-size:9px;color:#aaa;text-align:right;margin-top:8px;">${dt} · 판사 이공정</div>
       </div>
-      <div style="text-align:center;font-size:10px;color:#aaa;margin-top:4px;" class="toggle-hint">▼ 상세 보기</div>
+      <div style="text-align:center;font-size:10px;color:#aaa;margin-top:4px;" class="vhint">▼ 상세 보기</div>
     </div>`;
   }).join('');
 }
-
-function toggleVerdictDetail(el){
-  const detail=el.querySelector('.verdict-detail');
-  const hint=el.querySelector('.toggle-hint');
-  if(detail.style.display==='none'){
-    detail.style.display='block';
-    hint.textContent='▲ 접기';
-  } else {
-    detail.style.display='none';
-    hint.textContent='▼ 상세 보기';
-  }
+function toggleVD(el){
+  const d=el.querySelector('.vdet'),h=el.querySelector('.vhint');
+  if(d.style.display==='none'){d.style.display='block';h.textContent='▲ 접기';}
+  else{d.style.display='none';h.textContent='▼ 상세 보기';}
+}
+function filterVerdicts(kw){
+  const cnt=document.getElementById('vcnt');
+  if(!kw.trim()){cnt.textContent=`총 ${allVerdicts.length}건의 판결문`;renderVList(allVerdicts);return;}
+  const k=kw.toLowerCase();
+  const f=allVerdicts.filter(v=>v.topic.toLowerCase().includes(k)||v.verdict.reason.toLowerCase().includes(k)||v.verdict.order.toLowerCase().includes(k)||v.plaintiff.toLowerCase().includes(k)||v.defendant.toLowerCase().includes(k));
+  cnt.textContent=`"${kw}" 검색 결과 ${f.length}건`;
+  renderVList(f);
 }
 
-function filterVerdicts(keyword){
-  const countEl=document.getElementById('verdict-count');
-  if(!keyword.trim()){
-    countEl.textContent=`총 ${allVerdicts.length}건의 판결문`;
-    renderVerdictList(allVerdicts);
-    return;
-  }
-  const kw=keyword.toLowerCase();
-  const filtered=allVerdicts.filter(v=>
-    v.topic.toLowerCase().includes(kw)||
-    v.verdict.reason.toLowerCase().includes(kw)||
-    v.verdict.order.toLowerCase().includes(kw)||
-    v.plaintiff.toLowerCase().includes(kw)||
-    v.defendant.toLowerCase().includes(kw)
-  );
-  countEl.textContent=`"${keyword}" 검색 결과 ${filtered.length}건`;
-  renderVerdictList(filtered);
+// ══ 리셋 ══
+function resetApp(){
+  ctt();if(waitInterval)clearInterval(waitInterval);if(roomListener){roomListener();roomListener=null;}
+  Object.assign(S,{userName:'',topic:'',role:'원고',roomCode:'',plaintiffName:'',defendantName:'',plaintiffStatement:'',defendantStatement:'',plaintiffArg:'',defendantArg:'',isYujin:false,bribedJudge:false});
+  ['name-input','code-input','tt','ms','fs2'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const cp2=document.getElementById('cp');if(cp2)cp2.textContent='...';
+  ['sb','db'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+  document.getElementById('gov').style.display='flex';
+  document.getElementById('cbn').style.display='none';
+  document.getElementById('chl').style.display='none';
+  document.getElementById('bp2').style.display='none';
+  document.getElementById('bd2').style.display='none';
+  document.getElementById('jbw').style.display='none';
+  document.getElementById('vg').style.display='block';
+  document.getElementById('vc').style.display='none';
+  document.getElementById('pg-trial').style.display='none';
+  document.getElementById('pg-verdict').style.display='none';
+  ['sp2','sd2'].forEach(id=>{const el=document.getElementById(id);if(el){el.style.opacity='.45';el.style.filter='none';}});
+  const sj=document.getElementById('sj2');if(sj){sj.style.opacity='.7';sj.style.filter='none';}
+  // counter-inner 리셋
+  const ci=document.getElementById('ci');
+  if(ci)ci.innerHTML=`<div style="font-size:var(--fsm);color:#5a3a1a;font-weight:700;text-align:center">논쟁 주제를 작성하여 제출하세요</div>
+    <div class="cpl" style="width:100%;max-width:260px">
+      <div class="cs">접수</div><div class="ct">고 소 장</div>
+      <div style="font-size:10px;color:#555;margin-bottom:5px">사건명</div><div class="cb" id="cp">...</div>
+      <div class="cf">윤원가정법원 귀중</div>
+    </div>
+    <textarea id="tt" class="fta" style="height:64px;border-color:#c8a060;background:#fffef5"
+      placeholder="예: 남자친구가 게임을 너무 오래 해요..."
+      oninput="document.getElementById('cp').textContent=this.value||'...'"></textarea>
+    <button class="bp" style="max-width:200px" onclick="submitCounter()">제출하기 📨</button>`;
+  rl('lsvg',false,false);rl('svp',false,false);rl('svd',false,false);rj('svj',false,false);rj('jvs',false,false);
+  show('pg-intro');
 }
-renderLawyer('lawyer-svg',false,false);
-renderLawyer('svg-p',false,false);
-renderLawyer('svg-d',false,false);
-renderJudge('svg-j',false,false);
-renderJudge('judge-verdict-svg',false,false);
+
+// ══ 초기 렌더 ══
+rl('lsvg',false,false);rl('svp',false,false);rl('svd',false,false);rj('svj',false,false);rj('jvs',false,false);
+show('pg-intro');
 </script>
 </body>
 </html>
