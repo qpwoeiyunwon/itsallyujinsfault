@@ -186,7 +186,137 @@ textarea,input{font-family:inherit;}
   </div>
 </div>
 
-<!-- 입장 오버레이 -->
+<!-- 판사 로비 페이지 -->
+<div class="screen" id="s-lobby-judge">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:8px">
+      <img src="https://raw.githubusercontent.com/qpwoeiyunwon/itsallyujinsfault/main/courtmark2.png" style="width:28px;height:28px;object-fit:contain;"/>
+      <span class="topbar-title">윤원가정법원</span>
+    </div>
+    <span style="font-size:var(--font-sm);color:#c0392b;margin-left:8px">⚠️ 기밀</span>
+  </div>
+  <div class="center-wrap" style="gap:20px;">
+    <div style="font-size:40px">👨‍⚖️</div>
+    <div style="font-size:var(--font-lg);font-weight:900;color:#1a237e;text-align:center;">판사에게 로비하시겠습니까?</div>
+    <div style="font-size:var(--font-sm);color:#888;text-align:center;line-height:1.7;">이 내용은 철저히 기밀로 유지됩니다.<br>아무도 모를 거예요... 🤫</div>
+    <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:300px;">
+      <button class="btn-primary" onclick="showJudgePick()" style="background:linear-gradient(135deg,#c0392b,#922b21);">예, 로비하겠습니다 💰</button>
+      <button onclick="goCounter()" style="background:none;border:1.5px solid #ddd;border-radius:var(--radius);padding:var(--btn-pad);font-size:var(--font-base);color:#888;cursor:pointer;">아니오, 정정당당하게</button>
+    </div>
+  </div>
+</div>
+
+<!-- 판사 선택 페이지 -->
+<div class="screen" id="s-judge-pick">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:8px">
+      <img src="https://raw.githubusercontent.com/qpwoeiyunwon/itsallyujinsfault/main/courtmark2.png" style="width:28px;height:28px;object-fit:contain;"/>
+      <span class="topbar-title">윤원가정법원</span>
+    </div>
+    <span style="font-size:var(--font-sm);color:#c0392b;margin-left:8px">⚠️ 기밀</span>
+  </div>
+  <div class="center-wrap" style="gap:20px;">
+    <div style="font-size:var(--font-lg);font-weight:900;color:#1a237e;text-align:center;">판사를 선택하세요</div>
+    <div style="font-size:var(--font-sm);color:#888;text-align:center;">원하시는 판사를 선택해주세요 😏</div>
+    <div style="display:flex;flex-direction:column;gap:12px;width:100%;max-width:300px;">
+      <!-- 엄격한 판사 (상대방에게) -->
+      <button onclick="selectJudge('strict')" style="background:white;border:2px solid #1a237e;border-radius:12px;padding:16px;text-align:left;cursor:pointer;transition:all .2s;"
+        onmouseover="this.style.background='#f0f4ff'" onmouseout="this.style.background='white'">
+        <div style="font-size:20px;margin-bottom:6px">😤</div>
+        <div style="font-size:var(--font-base);font-weight:700;color:#1a237e;">상대방에게 엄격한 판사</div>
+        <div style="font-size:var(--font-sm);color:#888;margin-top:4px;">판사 김엄격 — 상대방을 가차없이 몰아붙이는 판사</div>
+      </button>
+      <!-- 관대한 판사 (나에게) -->
+      <button onclick="selectJudge('lenient')" style="background:white;border:2px solid #27ae60;border-radius:12px;padding:16px;text-align:left;cursor:pointer;transition:all .2s;"
+        onmouseover="this.style.background='#f0fff4'" onmouseout="this.style.background='white'">
+        <div style="font-size:20px;margin-bottom:6px">😊</div>
+        <div style="font-size:var(--font-base);font-weight:700;color:#27ae60;">나에게 관대한 판사</div>
+        <div style="font-size:var(--font-sm);color:#888;margin-top:4px;">판사 이관대 — 원고의 입장을 깊이 이해하는 판사</div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 금품 전달 팝업 -->
+<div class="popup-overlay" id="popup-bribe" onclick="event.stopPropagation()">
+  <div class="popup-box" onclick="event.stopPropagation()">
+    <div style="font-size:48px;margin-bottom:12px" id="bribe-icon">💰</div>
+    <div style="font-size:15px;font-weight:900;color:#1a237e;margin-bottom:8px" id="bribe-judge-name"></div>
+    <div style="font-size:13px;color:#555;line-height:1.8;margin-bottom:4px">판사에게 금품을 건네주었습니다.</div>
+    <div style="font-size:12px;color:#aaa;margin-bottom:20px">아무도 모를 거예요... 🤫</div>
+    <div style="width:100%;background:#eee;border-radius:4px;height:6px;margin-bottom:20px;overflow:hidden;">
+      <div id="bribe-progress" style="height:100%;background:linear-gradient(90deg,#f39c12,#FFD700);width:0%;transition:width 2s ease;border-radius:4px;"></div>
+    </div>
+    <div style="font-size:11px;color:#888" id="bribe-status">거래 진행 중...</div>
+  </div>
+</div>
+
+<!-- 체포 애니메이션 오버레이 -->
+<div id="arrest-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:400;display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px;font-family:'Noto Sans KR',sans-serif;">
+  <div style="color:#ff4444;font-size:clamp(20px,6vw,28px);font-weight:900;letter-spacing:2px;text-align:center;" id="arrest-title">🚨 잠깐!!!</div>
+  <div id="arrest-scene" style="position:relative;width:clamp(280px,75vw,360px);height:160px;">
+    <!-- 경찰 SVG -->
+    <div id="arrest-cop" style="position:absolute;left:-80px;bottom:0;transition:left 1s ease;">
+      <svg width="70" height="110" viewBox="0 0 70 110">
+        <!-- 다리 -->
+        <rect x="22" y="78" width="11" height="28" rx="4" fill="#1a237e"/>
+        <rect x="37" y="78" width="11" height="28" rx="4" fill="#1a237e"/>
+        <!-- 몸 -->
+        <rect x="14" y="40" width="42" height="42" rx="6" fill="#1a5fa8"/>
+        <!-- 배지 -->
+        <polygon points="28,52 35,48 42,52 40,60 30,60" fill="#FFD700"/>
+        <circle cx="35" cy="55" r="3" fill="#1a237e"/>
+        <!-- 팔 (잡는 포즈) -->
+        <line x1="14" y1="50" x2="2" y2="65" stroke="#1a5fa8" stroke-width="10" stroke-linecap="round"/>
+        <line x1="56" y1="50" x2="68" y2="42" stroke="#1a5fa8" stroke-width="10" stroke-linecap="round"/>
+        <!-- 목 -->
+        <rect x="30" y="30" width="10" height="12" rx="4" fill="#F5C5A3"/>
+        <!-- 얼굴 -->
+        <circle cx="35" cy="22" r="18" fill="#F5C5A3"/>
+        <!-- 경찰 모자 -->
+        <rect x="18" y="8" width="34" height="8" rx="2" fill="#1a237e"/>
+        <rect x="14" y="13" width="42" height="4" rx="2" fill="#1a237e"/>
+        <rect x="22" y="5" width="26" height="8" rx="3" fill="#1a237e"/>
+        <rect x="28" y="8" width="14" height="5" rx="2" fill="#FFD700"/>
+        <!-- 눈 -->
+        <circle cx="28" cy="21" r="3" fill="#333"/>
+        <circle cx="42" cy="21" r="3" fill="#333"/>
+        <!-- 선글라스 -->
+        <rect x="22" y="18" width="14" height="7" rx="3" fill="#333" opacity=".8"/>
+        <rect x="34" y="18" width="14" height="7" rx="3" fill="#333" opacity=".8"/>
+        <line x1="36" y1="21" x2="34" y2="21" stroke="#555" stroke-width="2"/>
+      </svg>
+    </div>
+    <!-- 유진 캐릭터 -->
+    <div id="arrest-yujin" style="position:absolute;right:40px;bottom:0;transition:right 1.5s ease;">
+      <svg width="55" height="100" viewBox="0 0 55 100">
+        <rect x="18" y="68" width="9" height="28" rx="4" fill="#c0392b"/>
+        <rect x="30" y="68" width="9" height="28" rx="4" fill="#c0392b"/>
+        <path d="M10 38 Q8 55 10 70 L46 70 Q48 55 46 38 Z" fill="#e74c3c"/>
+        <rect x="23" y="28" width="10" height="12" rx="4" fill="#F5C5A3"/>
+        <ellipse cx="27" cy="18" rx="16" ry="18" fill="#F5C5A3"/>
+        <path d="M12 12 Q16 2 27 4 Q38 2 42 12 Q36 6 27 8 Q18 6 12 12Z" fill="#2c1a0a"/>
+        <circle cx="21" cy="16" r="3" fill="#333"/>
+        <circle cx="33" cy="16" r="3" fill="#333"/>
+        <path d="M21 24 Q27 28 33 24" stroke="#c0392b" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <!-- 손에 돈 -->
+        <rect x="44" y="45" width="14" height="8" rx="2" fill="#27ae60"/>
+        <text x="51" y="52" text-anchor="middle" font-size="6" fill="white" font-weight="bold">$</text>
+      </svg>
+    </div>
+    <!-- 감옥 -->
+    <div id="arrest-jail" style="position:absolute;right:-120px;bottom:0;transition:right 1.5s ease 0.5s;">
+      <svg width="90" height="110" viewBox="0 0 90 110">
+        <rect x="5" y="20" width="80" height="90" rx="4" fill="#555"/>
+        <rect x="5" y="10" width="80" height="16" rx="4" fill="#444"/>
+        <text x="45" y="22" text-anchor="middle" font-size="9" fill="#FFD700" font-weight="bold">교도소</text>
+        {[0,1,2,3,4].map(i=>`<rect x="${15+i*14}" y="30" width="6" height="70" rx="2" fill="#333"/>`).join('')}
+        <rect x="5" y="95" width="80" height="8" rx="2" fill="#444"/>
+      </svg>
+    </div>
+  </div>
+  <div style="color:white;font-size:clamp(13px,3.5vw,16px);text-align:center;max-width:320px;line-height:1.7;padding:0 20px;" id="arrest-msg"></div>
+</div>
 <div id="entry-overlay">
   <div id="entry-phase0" style="display:flex;flex-direction:column;align-items:center;gap:16px">
     <div style="color:white;font-size:var(--font-base)">📬 고소장을 수령했습니다</div>
@@ -571,7 +701,8 @@ const S={
   userName:'', topic:'', role:'원고',
   roomCode:'', plaintiffName:'', defendantName:'',
   plaintiffStatement:'', defendantStatement:'',
-  plaintiffArg:'', defendantArg:''
+  plaintiffArg:'', defendantArg:'',
+  isYujin:false, bribedJudge:false
 };
 let trialTimers=[], roomListener=null, waitInterval=null;
 
@@ -675,6 +806,7 @@ function confirmYujinEntry(){
   closePopup('popup-yujin');
   const n=document.getElementById('name-input').value.trim();
   S.userName=n;
+  S.isYujin=true; // 유진 플래그
   document.getElementById('topbar-user').textContent='👤 '+n+'님';
   show('s-lobby');
 }
@@ -1228,7 +1360,7 @@ function resetApp(){
   clearTrialTimers();
   if(waitInterval)clearInterval(waitInterval);
   if(roomListener){roomListener();roomListener=null;}
-  Object.assign(S,{userName:'',topic:'',role:'원고',roomCode:'',plaintiffName:'',defendantName:'',plaintiffStatement:'',defendantStatement:'',plaintiffArg:'',defendantArg:''});
+  Object.assign(S,{userName:'',topic:'',role:'원고',roomCode:'',plaintiffName:'',defendantName:'',plaintiffStatement:'',defendantStatement:'',plaintiffArg:'',defendantArg:'',isYujin:false,bribedJudge:false});
   ['name-input','code-input','topic-textarea','my-statement','final-statement'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   const cp=document.getElementById('complaint-preview');if(cp)cp.textContent='...';
   const sb=document.getElementById('statement-box');if(sb)sb.style.display='none';
@@ -1268,6 +1400,64 @@ function resetApp(){
   renderJudge('svg-j',false,false);
   renderJudge('judge-verdict-svg',false,false);
   show('s-intro');
+}
+
+// ── 체포 애니메이션 ──
+function showArrestAnimation(onDone){
+  const ov=document.getElementById('arrest-overlay');
+  ov.style.display='flex';
+  document.getElementById('arrest-title').textContent='🚨 잠깐!!!';
+  document.getElementById('arrest-msg').textContent='';
+
+  const cop=document.getElementById('arrest-cop');
+  const yujin=document.getElementById('arrest-yujin');
+  const jail=document.getElementById('arrest-jail');
+
+  // 초기 위치 리셋
+  cop.style.left='-80px';
+  yujin.style.right='40px';
+  jail.style.right='-120px';
+
+  // 경찰 등장
+  setTimeout(()=>{cop.style.left='20px';},300);
+
+  // 경찰 메시지
+  setTimeout(()=>{
+    document.getElementById('arrest-msg').innerHTML=
+      `<span style="color:#ff4444;font-weight:900">"${S.userName}님, 부정 청탁 혐의로<br>잠시 같이 가주셔야 겠습니다."</span>`;
+    playBleep(0.6);
+  },1500);
+
+  // 감옥 등장 + 유진 끌려감
+  setTimeout(()=>{
+    jail.style.right='0px';
+    setTimeout(()=>{
+      yujin.style.right='-20px'; // 감옥 쪽으로
+      cop.style.left='60px';
+    },600);
+  },3000);
+
+  // 감옥 문 닫히는 효과
+  setTimeout(()=>{
+    document.getElementById('arrest-title').textContent='🔒 철컹철컹...';
+    document.getElementById('arrest-msg').innerHTML=
+      `<span style="color:#aaa;">부정 청탁 혐의 확정<br>재판은 계속 진행됩니다...</span>`;
+    playBleep(0.4);
+  },5000);
+
+  // 판결 화면으로
+  setTimeout(()=>{
+    ov.style.display='none';
+    // 위치 리셋
+    cop.style.transition='none';yujin.style.transition='none';jail.style.transition='none';
+    cop.style.left='-80px';yujin.style.right='40px';jail.style.right='-120px';
+    setTimeout(()=>{
+      cop.style.transition='left 1s ease';
+      yujin.style.transition='right 1.5s ease';
+      jail.style.transition='right 1.5s ease 0.5s';
+    },100);
+    if(onDone)onDone();
+  },7000);
 }
 
 // ── 판결문 열람 ──
