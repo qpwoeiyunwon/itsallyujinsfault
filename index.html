@@ -133,12 +133,33 @@ textarea,input{font-family:inherit;}
     <button onclick="closePopup('popup-egg1')" class="btn-primary" style="max-width:160px;padding:10px 24px">알겠습니다</button>
   </div>
 </div>
-<div class="popup-overlay" id="popup-egg2" onclick="closePopup('popup-egg2')">
-  <div class="popup-box" onclick="event.stopPropagation()">
-    <div style="font-size:40px;margin-bottom:12px">⚖️</div>
-    <div style="font-size:15px;font-weight:900;color:#1a237e;margin-bottom:8px">판결문 열람</div>
-    <div style="font-size:13px;color:#555;line-height:1.7;margin-bottom:16px">사건번호 2024-유진-001<br>"피고는 원고에게 뽀뽀 3회를<br>즉시 이행할 것을 명함"<br><br><span style="font-size:11px;color:#aaa">— 판사 이공정</span></div>
-    <button onclick="closePopup('popup-egg2')" class="btn-primary" style="max-width:160px;padding:10px 24px">확인했습니다</button>
+<!-- 판결문 열람 페이지 -->
+<div class="popup-overlay" id="popup-egg2" onclick="closePopup('popup-egg2')" style="align-items:flex-start;padding:0;">
+  <div onclick="event.stopPropagation()" style="width:100%;max-width:520px;height:100dvh;background:white;display:flex;flex-direction:column;margin:0 auto;overflow:hidden;">
+    <!-- 헤더 -->
+    <div style="background:linear-gradient(135deg,#1a237e,#1a5fa8);padding:16px var(--pad);display:flex;align-items:center;gap:12px;flex-shrink:0;">
+      <img src="https://raw.githubusercontent.com/qpwoeiyunwon/itsallyujinsfault/main/courtmark2.png" style="width:32px;height:32px;object-fit:contain;"/>
+      <div>
+        <div style="color:white;font-weight:900;font-size:var(--font-lg);letter-spacing:1px">판결문 열람</div>
+        <div style="color:rgba(255,255,255,.7);font-size:10px">윤원가정법원 전자소송 시스템</div>
+      </div>
+      <div style="flex:1"></div>
+      <button onclick="closePopup('popup-egg2')" style="background:rgba(255,255,255,.2);border:none;color:white;width:32px;height:32px;border-radius:50%;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;">✕</button>
+    </div>
+    <!-- 검색창 -->
+    <div style="padding:12px var(--pad);border-bottom:1px solid #eee;flex-shrink:0;background:#f8f9ff;">
+      <div style="position:relative;">
+        <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:16px;">🔍</span>
+        <input id="verdict-search" type="text" placeholder="사건명, 판결 이유, 화해 명령 검색..."
+          style="width:100%;padding:11px 12px 11px 38px;border:1.5px solid #1a5fa8;border-radius:10px;font-size:var(--font-sm);outline:none;font-family:inherit;box-sizing:border-box;"
+          oninput="filterVerdicts(this.value)"/>
+      </div>
+      <div style="margin-top:8px;font-size:10px;color:#888" id="verdict-count"></div>
+    </div>
+    <!-- 판결문 목록 -->
+    <div id="verdict-list" style="flex:1;overflow-y:auto;padding:12px var(--pad);display:flex;flex-direction:column;gap:12px;">
+      <div style="text-align:center;padding:40px 0;color:#aaa;font-size:var(--font-sm)">⏳ 판결문을 불러오는 중...</div>
+    </div>
   </div>
 </div>
 <div class="popup-overlay" id="popup-egg3" onclick="closePopup('popup-egg3')">
@@ -147,6 +168,21 @@ textarea,input{font-family:inherit;}
     <div style="font-size:15px;font-weight:900;color:#1a237e;margin-bottom:8px">이용 안내</div>
     <div style="font-size:13px;color:#555;line-height:1.7;margin-bottom:16px">본 법원은 연인 간 분쟁만<br>취급합니다.<br><br>싸우지 말고 사랑하세요 💕<br><br><span style="font-size:11px;color:#aaa">운영시간: 24시간 (싸울 때마다)</span></div>
     <button onclick="closePopup('popup-egg3')" class="btn-primary" style="max-width:160px;padding:10px 24px">명심하겠습니다</button>
+  </div>
+</div>
+
+<!-- 유진 이스터에그 팝업 -->
+<div class="popup-overlay" id="popup-yujin" onclick="event.stopPropagation()">
+  <div class="popup-box" onclick="event.stopPropagation()">
+    <div style="font-size:40px;margin-bottom:12px">🤔</div>
+    <div style="font-size:15px;font-weight:900;color:#1a237e;margin-bottom:12px">정말 입장하시겠어요?</div>
+    <div style="font-size:13px;color:#555;line-height:1.8;margin-bottom:20px">
+      <span id="yujin-name-display"></span>님이 윤원님에게<br>잘못한건 아닌지<br>다시 한번 생각해보아요 🕊️
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <button onclick="confirmYujinEntry()" class="btn-primary" style="max-width:100%;padding:12px">그래도 입장하기</button>
+      <button onclick="closePopup('popup-yujin')" style="background:none;border:1.5px solid #ddd;border-radius:var(--radius);padding:10px;font-size:var(--font-sm);color:#888;cursor:pointer;">다시 생각해볼게요...</button>
+    </div>
   </div>
 </div>
 
@@ -562,7 +598,10 @@ function showVerdict(){
 }
 
 // ── 팝업 ──
-function openPopup(id){document.getElementById(id).classList.add('active');}
+function openPopup(id){
+  document.getElementById(id).classList.add('active');
+  if(id==='popup-egg2') loadVerdicts();
+}
 function closePopup(id){document.getElementById(id).classList.remove('active');}
 
 // ── API ──
@@ -621,6 +660,20 @@ function genCode(){return Math.random().toString(36).substring(2,8).toUpperCase(
 function goLobby(){
   const n=document.getElementById('name-input').value.trim();
   if(!n)return;
+  // 유진 이스터에그
+  if(n==='정유진'||n==='유진'){
+    document.getElementById('yujin-name-display').textContent=n;
+    openPopup('popup-yujin');
+    return;
+  }
+  S.userName=n;
+  document.getElementById('topbar-user').textContent='👤 '+n+'님';
+  show('s-lobby');
+}
+
+function confirmYujinEntry(){
+  closePopup('popup-yujin');
+  const n=document.getElementById('name-input').value.trim();
   S.userName=n;
   document.getElementById('topbar-user').textContent='👤 '+n+'님';
   show('s-lobby');
@@ -1217,7 +1270,131 @@ function resetApp(){
   show('s-intro');
 }
 
-// ── 초기 렌더 ──
+// ── 판결문 열람 ──
+let allVerdicts=[];
+
+async function loadVerdicts(){
+  const list=document.getElementById('verdict-list');
+  const countEl=document.getElementById('verdict-count');
+  list.innerHTML='<div style="text-align:center;padding:40px 0;color:#aaa;font-size:var(--font-sm)">⏳ 판결문을 불러오는 중...</div>';
+  allVerdicts=[];
+
+  waitFirebase(async()=>{
+    try{
+      const roomsRef=window.dbRef(window.db,'rooms');
+      const snap=await window.dbGet(roomsRef);
+      if(!snap.exists()){
+        list.innerHTML='<div style="text-align:center;padding:40px 0;color:#aaa;font-size:var(--font-sm)">📭 아직 판결문이 없습니다</div>';
+        return;
+      }
+      const rooms=snap.val();
+      // 판결 완료된 방만 추출, 최신순 정렬
+      allVerdicts=Object.entries(rooms)
+        .filter(([code,data])=>data.status==='done' && data.verdict)
+        .map(([code,data])=>({
+          code,
+          topic: data.topic||'사건명 없음',
+          plaintiff: data.plaintiff?.name||'원고',
+          defendant: data.defendant?.name||'피고',
+          verdict: data.verdict,
+          createdAt: data.createdAt||0
+        }))
+        .sort((a,b)=>b.createdAt-a.createdAt);
+
+      countEl.textContent=`총 ${allVerdicts.length}건의 판결문`;
+      renderVerdictList(allVerdicts);
+    }catch(e){
+      list.innerHTML='<div style="text-align:center;padding:40px 0;color:#e74c3c;font-size:var(--font-sm)">❌ 불러오기 실패</div>';
+    }
+  });
+}
+
+function renderVerdictList(verdicts){
+  const list=document.getElementById('verdict-list');
+  if(verdicts.length===0){
+    list.innerHTML='<div style="text-align:center;padding:40px 0;color:#aaa;font-size:var(--font-sm)">🔍 검색 결과가 없습니다</div>';
+    return;
+  }
+  list.innerHTML=verdicts.map((v,i)=>{
+    const pf=v.verdict.plaintiff_fault, df=v.verdict.defendant_fault;
+    const winner=pf<df?`🏆 ${v.plaintiff} 승소`:pf>df?`🏆 ${v.defendant} 승소`:'⚖️ 무승부';
+    const date=v.createdAt?new Date(v.createdAt).toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'}):'날짜 미상';
+    return `
+    <div style="background:white;border:1.5px solid #e8eeff;border-radius:12px;padding:14px;box-shadow:0 2px 8px rgba(26,95,168,.07);cursor:pointer;transition:border-color .2s;"
+      onmouseover="this.style.borderColor='#1a5fa8'" onmouseout="this.style.borderColor='#e8eeff'"
+      onclick="toggleVerdictDetail(this)">
+      <!-- 헤더 -->
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px;">
+        <div style="flex:1;">
+          <div style="font-size:9px;color:#1a5fa8;font-weight:700;margin-bottom:3px;">사건번호 ${date.replace(/\./g,'').replace(/ /g,'-')}-${v.code}</div>
+          <div style="font-size:var(--font-sm);font-weight:700;color:#1a1a1a;line-height:1.4;">${v.topic}</div>
+        </div>
+        <div style="font-size:10px;font-weight:700;color:#FFD700;background:#1a237e;padding:3px 8px;border-radius:12px;white-space:nowrap;flex-shrink:0;">${winner}</div>
+      </div>
+      <!-- 당사자 -->
+      <div style="display:flex;gap:8px;margin-bottom:8px;">
+        <div style="flex:1;background:#f0f4ff;border-radius:6px;padding:6px 10px;text-align:center;">
+          <div style="font-size:9px;color:#888;">원고</div>
+          <div style="font-size:var(--font-sm);font-weight:700;color:#1a5fa8;">${v.plaintiff}</div>
+          <div style="font-size:11px;color:#74b9ff;font-weight:700;">${pf}% 잘못</div>
+        </div>
+        <div style="display:flex;align-items:center;font-size:16px;">⚖️</div>
+        <div style="flex:1;background:#fff0f0;border-radius:6px;padding:6px 10px;text-align:center;">
+          <div style="font-size:9px;color:#888;">피고</div>
+          <div style="font-size:var(--font-sm);font-weight:700;color:#c0392b;">${v.defendant}</div>
+          <div style="font-size:11px;color:#ff7675;font-weight:700;">${df}% 잘못</div>
+        </div>
+      </div>
+      <!-- 잘못 비율 바 -->
+      <div style="height:8px;border-radius:4px;overflow:hidden;background:#eee;display:flex;margin-bottom:8px;">
+        <div style="width:${pf}%;background:linear-gradient(90deg,#74b9ff,#0984e3);"></div>
+        <div style="width:${df}%;background:linear-gradient(90deg,#fd79a8,#e17055);"></div>
+      </div>
+      <!-- 상세 (토글) -->
+      <div class="verdict-detail" style="display:none;border-top:1px solid #eee;padding-top:10px;margin-top:4px;">
+        <div style="font-size:10px;color:#1a5fa8;font-weight:700;margin-bottom:4px;">📋 판결 이유</div>
+        <div style="font-size:var(--font-sm);color:#333;line-height:1.7;margin-bottom:10px;">${v.verdict.reason}</div>
+        <div style="background:linear-gradient(135deg,#fff9e6,#fff3cc);border:1.5px solid #FFD700;border-radius:8px;padding:10px;text-align:center;">
+          <div style="font-size:10px;color:#e67e22;font-weight:700;margin-bottom:4px;">🩷 화해 명령</div>
+          <div style="font-size:var(--font-sm);font-weight:700;color:#1a1a1a;">${v.verdict.order}</div>
+        </div>
+        <div style="font-size:9px;color:#aaa;text-align:right;margin-top:8px;">${date} · 판사 이공정</div>
+      </div>
+      <div style="text-align:center;font-size:10px;color:#aaa;margin-top:4px;" class="toggle-hint">▼ 상세 보기</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleVerdictDetail(el){
+  const detail=el.querySelector('.verdict-detail');
+  const hint=el.querySelector('.toggle-hint');
+  if(detail.style.display==='none'){
+    detail.style.display='block';
+    hint.textContent='▲ 접기';
+  } else {
+    detail.style.display='none';
+    hint.textContent='▼ 상세 보기';
+  }
+}
+
+function filterVerdicts(keyword){
+  const countEl=document.getElementById('verdict-count');
+  if(!keyword.trim()){
+    countEl.textContent=`총 ${allVerdicts.length}건의 판결문`;
+    renderVerdictList(allVerdicts);
+    return;
+  }
+  const kw=keyword.toLowerCase();
+  const filtered=allVerdicts.filter(v=>
+    v.topic.toLowerCase().includes(kw)||
+    v.verdict.reason.toLowerCase().includes(kw)||
+    v.verdict.order.toLowerCase().includes(kw)||
+    v.plaintiff.toLowerCase().includes(kw)||
+    v.defendant.toLowerCase().includes(kw)
+  );
+  countEl.textContent=`"${keyword}" 검색 결과 ${filtered.length}건`;
+  renderVerdictList(filtered);
+}
 renderLawyer('lawyer-svg',false,false);
 renderLawyer('svg-p',false,false);
 renderLawyer('svg-d',false,false);
